@@ -19,6 +19,46 @@ Route::get('/', function () {
 })->name('home');
 
 Route::view('/chinh-sach-hoan-tien', 'policy.refund')->name('policy.refund');
+Route::view('/gioi-thieu', 'pages.gioi-thieu')->name('about');
+Route::view('/luyen-thi-aptis', 'pages.luyen-thi-aptis')->name('aptis');
+
+// Sitemap XML — chỉ trang công khai.
+Route::get('/sitemap.xml', function () {
+    $now = now()->toAtomString();
+    $urls = [
+        ['loc' => route('home'), 'priority' => '1.0', 'freq' => 'weekly'],
+        ['loc' => route('aptis'), 'priority' => '0.9', 'freq' => 'monthly'],
+        ['loc' => route('about'), 'priority' => '0.8', 'freq' => 'monthly'],
+        ['loc' => route('register'), 'priority' => '0.9', 'freq' => 'weekly'],
+        ['loc' => route('policy.refund'), 'priority' => '0.3', 'freq' => 'yearly'],
+    ];
+
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+    foreach ($urls as $u) {
+        $xml .= "  <url><loc>{$u['loc']}</loc><lastmod>{$now}</lastmod>"
+              . "<changefreq>{$u['freq']}</changefreq><priority>{$u['priority']}</priority></url>\n";
+    }
+    $xml .= '</urlset>';
+
+    return response($xml, 200, ['Content-Type' => 'application/xml']);
+})->name('sitemap');
+
+// robots.txt động.
+Route::get('/robots.txt', function () {
+    $lines = [
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /admin',
+        'Disallow: /dashboard',
+        'Disallow: /thanh-toan',
+        'Disallow: /doi-mat-khau',
+        '',
+        'Sitemap: ' . route('sitemap'),
+    ];
+
+    return response(implode("\n", $lines) . "\n", 200, ['Content-Type' => 'text/plain']);
+});
 
 // ── Đăng ký + Thanh toán (public) ───────────────────────────────────────
 // Link giới thiệu sale: /dk/M1/thang

@@ -36,7 +36,11 @@
     <footer class="mt-16 border-t border-slate-200 bg-white">
         <div class="mx-auto max-w-5xl px-6 py-8 text-sm text-slate-500 flex flex-wrap gap-4 justify-between">
             <span>© {{ date('Y') }} {{ config('app.name') }}</span>
-            <a href="{{ route('policy.refund') }}" class="hover:text-slate-800">Chính sách hoàn tiền</a>
+            <nav class="flex flex-wrap gap-4">
+                <a href="{{ route('about') }}" class="hover:text-slate-800">Giới thiệu</a>
+                <a href="{{ route('aptis') }}" class="hover:text-slate-800">Luyện thi APTIS</a>
+                <a href="{{ route('policy.refund') }}" class="hover:text-slate-800">Chính sách hoàn tiền</a>
+            </nav>
         </div>
     </footer>
 </body>
