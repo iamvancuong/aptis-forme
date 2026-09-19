@@ -8,12 +8,16 @@
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-full font-sans antialiased bg-slate-50 text-slate-900">
-    <header class="bg-white ring-1 ring-slate-200">
-        <div class="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="text-lg font-bold text-slate-900">{{ config('app.name') }}</a>
-            <nav class="flex items-center gap-4 text-sm">
-                <a href="{{ route('register') }}" class="text-slate-600 hover:text-indigo-600">Đăng ký</a>
-                <a href="{{ route('login') }}" class="rounded-lg bg-indigo-600 px-3 py-1.5 font-medium text-white hover:bg-indigo-700">Đăng nhập</a>
+    <header class="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur">
+        <div class="mx-auto max-w-6xl px-6 py-3.5 flex items-center justify-between">
+            <a href="{{ route('home') }}" class="flex items-center gap-2">
+                <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-600 to-violet-600 text-sm font-bold text-white">A</span>
+                <span class="text-lg font-bold text-slate-900">{{ config('app.name') }}</span>
+            </a>
+            <nav class="flex items-center gap-1 text-sm sm:gap-2">
+                <a href="{{ route('aptis') }}" class="hidden rounded-lg px-3 py-2 text-slate-600 hover:text-brand-600 sm:block">Luyện thi APTIS</a>
+                <a href="{{ route('register') }}" class="rounded-lg px-3 py-2 text-slate-600 hover:text-brand-600">Đăng ký</a>
+                <a href="{{ route('login') }}" class="rounded-lg bg-brand-600 px-4 py-2 font-medium text-white shadow-sm shadow-brand-600/20 hover:bg-brand-700">Đăng nhập</a>
             </nav>
         </div>
     </header>
