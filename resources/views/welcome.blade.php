@@ -17,14 +17,15 @@
                 Luyện tập theo từng kỹ năng, thi thử full đề có tính giờ, và được AI chấm Writing/Speaking —
                 tất cả trong một nền tảng.
             </p>
-            <div class="mt-8 flex items-center justify-center gap-3">
-                <a href="{{ route('register') }}" class="rounded-xl bg-brand-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 hover:bg-brand-700">
-                    Bắt đầu ngay →
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <a href="#hoc-thu" class="rounded-xl bg-brand-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/25 hover:bg-brand-700">
+                    Học thử miễn phí →
                 </a>
-                <a href="#bang-gia" class="rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50">
-                    Xem bảng giá
+                <a href="{{ route('register') }}" class="rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50">
+                    Đăng ký ngay
                 </a>
             </div>
+            <p class="mt-3 text-sm text-slate-400">Không cần đăng nhập — thử ngay mỗi kỹ năng một lượt.</p>
 
             {{-- Trust stats --}}
             <div class="mx-auto mt-14 grid max-w-2xl grid-cols-3 gap-4">
@@ -53,6 +54,33 @@
                     <p class="mt-1 text-sm text-slate-500">{{ $f[2] }}</p>
                 </div>
             @endforeach
+        </div>
+    </section>
+
+    {{-- Học thử miễn phí --}}
+    <section id="hoc-thu" class="mx-auto max-w-5xl px-6 py-16">
+        <div class="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-8 text-white sm:p-12">
+            <div class="text-center">
+                <span class="inline-block rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium">Không cần đăng nhập</span>
+                <h2 class="mt-4 text-3xl font-bold">Học thử miễn phí ngay</h2>
+                <p class="mx-auto mt-2 max-w-xl text-slate-300">Chọn một kỹ năng để làm thử. Mỗi kỹ năng được thử một lượt — thích thì đăng ký học không giới hạn.</p>
+            </div>
+            <div class="mx-auto mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                @foreach ([
+                    ['reading', '📖', 'Reading'],
+                    ['listening', '🎧', 'Listening'],
+                    ['grammar', '✏️', 'Grammar'],
+                    ['writing', '📝', 'Writing'],
+                    ['speaking', '🗣️', 'Speaking'],
+                ] as $sk)
+                    <a href="{{ route('trial.show', $sk[0]) }}"
+                       class="flex flex-col items-center gap-2 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-white/25">
+                        <span class="text-3xl">{{ $sk[1] }}</span>
+                        <span class="text-sm font-semibold">{{ $sk[2] }}</span>
+                        <span class="text-xs text-slate-400">Làm thử →</span>
+                    </a>
+                @endforeach
+            </div>
         </div>
     </section>
 

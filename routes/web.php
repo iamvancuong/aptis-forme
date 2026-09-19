@@ -18,6 +18,11 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Học thử (không cần đăng nhập, mỗi kỹ năng 1 lần)
+Route::get('/hoc-thu/{skill}', [\App\Http\Controllers\TrialController::class, 'show'])->name('trial.show');
+Route::post('/hoc-thu/{set}/check', [\App\Http\Controllers\TrialController::class, 'check'])
+    ->middleware('throttle:120,1')->name('trial.check');
+
 Route::view('/chinh-sach-hoan-tien', 'policy.refund')->name('policy.refund');
 Route::view('/gioi-thieu', 'pages.gioi-thieu')->name('about');
 Route::view('/luyen-thi-aptis', 'pages.luyen-thi-aptis')->name('aptis');

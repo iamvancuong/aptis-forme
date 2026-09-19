@@ -12,7 +12,11 @@ useAntiCopy(() => page.props.auth?.user?.role === 'admin');
 const props = defineProps({
     set: Object,
     questions: Array,
+    trial: { type: Boolean, default: false },
 });
+
+const checkUrl = computed(() => props.trial ? `/hoc-thu/${props.set.id}/check` : `/practice/${props.set.id}/check`);
+const exitUrl = computed(() => props.trial ? '/' : '/dashboard');
 
 // Khởi tạo answer đúng shape mà GradingService mong đợi cho từng dạng.
 const answers = reactive({});
@@ -43,8 +47,8 @@ const speakingStarted = ref(false);
 function onSpeakingDone() {
     if (current.value < total - 1) {
         setTimeout(() => current.value++, 900); // nghỉ ngắn rồi câu sau tự chạy
-    } else {
-        setTimeout(() => submit(), 900); // câu cuối xong → tự nộp
+    } else if (!props.trial) {
+        setTimeout(() => submit(), 900); // câu cuối xong → tự nộp (không áp dụng học thử)
     }
 }
 
@@ -76,7 +80,7 @@ async function checkCurrent() {
     if (checked[qid] || checking.value) return;
     checking.value = true;
     try {
-        const { data } = await axios.post(`/practice/${props.set.id}/check`, { question_id: qid, answer: answers[qid] });
+        const { data } = await axios.post(checkUrl.value, { question_id: qid, answer: answers[qid] });
         if (data.gradable) checked[qid] = data;
     } catch (e) {
         // im lặng
@@ -113,7 +117,7 @@ function submit() {
         <header class="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur">
             <div class="mx-auto max-w-2xl px-6 py-3">
                 <div class="flex items-center justify-between">
-                    <a href="/dashboard" class="text-sm text-slate-500 hover:text-slate-800">← Thoát</a>
+                    <a :href="exitUrl" class="text-sm text-slate-500 hover:text-slate-800">← Thoát</a>
                     <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">{{ set.skill }} · Part {{ currentQuestion.part }}</div>
                     <span class="text-sm font-medium text-slate-700">Câu {{ current + 1 }}/{{ total }}</span>
                 </div>
@@ -124,6 +128,12 @@ function submit() {
         </header>
 
         <main class="mx-auto max-w-2xl px-6 py-8">
+            <!-- Banner học thử -->
+            <div v-if="trial" class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-brand-600 to-violet-600 px-5 py-3 text-white">
+                <span class="text-sm font-medium">🎓 Bạn đang học thử miễn phí kỹ năng này.</span>
+                <a href="/register" class="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">Đăng ký học đầy đủ</a>
+            </div>
+
             <p class="mb-4 text-sm font-semibold text-slate-500">{{ set.title }}</p>
 
             <!-- Bài Nói: màn bắt đầu (1 lần) -->
@@ -187,13 +197,19 @@ function submit() {
                         <QuestionNav :items="navItems" :current="current" @jump="go" />
                         <button v-if="!isLast" @click="go(current + 1)"
                                 class="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Tiếp →</button>
+                        <a v-else-if="trial" href="/register"
+                           class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700">Đăng ký để tiếp tục</a>
                         <button v-else @click="submit" :disabled="form.processing"
                                 class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
                             {{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}
                         </button>
                     </div>
-                    <div class="mt-6 text-center">
+                    <div v-if="!trial" class="mt-6 text-center">
                         <button v-if="!isLast" @click="submit" :disabled="form.processing" class="text-xs text-slate-400 hover:text-red-600">Nộp bài sớm</button>
+                    </div>
+                    <div v-else class="mt-8 rounded-2xl bg-white p-6 text-center ring-1 ring-slate-200">
+                        <p class="text-sm text-slate-600">Thích bài học? Đăng ký để luyện <b>không giới hạn</b>, thi thử full đề và được <b>AI chấm Writing/Speaking</b>.</p>
+                        <a href="/register" class="mt-3 inline-block rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Đăng ký ngay →</a>
                     </div>
                 </template>
             </template>
