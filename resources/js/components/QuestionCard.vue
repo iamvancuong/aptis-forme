@@ -5,7 +5,9 @@ import SpeakingRecorder from './SpeakingRecorder.vue';
 const props = defineProps({
     question: Object,
     index: Number,
+    autostart: { type: Boolean, default: false },
 });
+defineEmits(['speaking-done']);
 
 // answer: giá trị nộp lên (shape khớp GradingService theo từng dạng)
 const answer = defineModel('answer');
@@ -154,7 +156,8 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
         </div>
 
         <!-- SPEAKING: tự đọc đề + beep + tự ghi âm (như v1) -->
-        <SpeakingRecorder v-else-if="question.skill === 'speaking'" :question="question" v-model:answer="answer" />
+        <SpeakingRecorder v-else-if="question.skill === 'speaking'" :question="question" :autostart="autostart"
+                          v-model:answer="answer" @done="$emit('speaking-done')" />
 
         <!-- fallback -->
         <div v-else class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">

@@ -1,7 +1,11 @@
 <script setup>
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-const props = defineProps({ question: Object });
+const props = defineProps({
+    question: Object,
+    autostart: { type: Boolean, default: false },
+});
+const emit = defineEmits(['done']);
 // answer = mảng File (mỗi sub-câu 1 file). Rỗng = chưa ghi.
 const answer = defineModel('answer');
 
@@ -134,7 +138,10 @@ function finishAll() {
     state.value = 'saving';
     stream?.getTracks().forEach((t) => t.stop());
     mediaRecorder = null;
-    setTimeout(() => (state.value = 'done'), 800);
+    setTimeout(() => {
+        state.value = 'done';
+        emit('done'); // báo cha tự chuyển sang câu tiếp
+    }, 800);
 }
 
 async function start() {
@@ -148,6 +155,11 @@ async function start() {
 function mmss(s) {
     return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
+
+onMounted(() => {
+    // Tự chạy ngay khi hiện câu (cha đã có thao tác "Bắt đầu" để mở mic/âm thanh).
+    if (props.autostart) start();
+});
 
 onBeforeUnmount(() => {
     clearInterval(interval);
@@ -178,14 +190,13 @@ onBeforeUnmount(() => {
                 Đang ghi câu {{ part === 4 ? '(toàn bài)' : subIndex + 1 }}…
             </div>
 
-            <button v-if="state === 'idle'" type="button" @click="start"
+            <button v-if="state === 'idle' && !autostart" type="button" @click="start"
                     class="mt-3 w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                 ▶ Bắt đầu (tự đọc đề & ghi âm)
             </button>
 
             <div v-else-if="state === 'done'" class="mt-3">
-                <p class="text-sm text-emerald-600">Đã ghi xong {{ answer?.length || 0 }} câu trả lời.</p>
-                <button type="button" @click="start" class="mt-2 rounded-lg bg-white px-3 py-1.5 text-sm text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50">Ghi lại</button>
+                <p class="text-sm text-emerald-600">✅ Đã ghi xong — tự chuyển câu tiếp…</p>
             </div>
             <p v-else class="mt-2 text-xs text-slate-400">Hệ thống đang tự động đọc đề và ghi âm — vui lòng làm theo hướng dẫn.</p>
         </div>

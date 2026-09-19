@@ -30,6 +30,19 @@ const current = ref(0);
 const startedAt = Date.now();
 const form = useForm({ answers, duration_seconds: 0 });
 
+// Bài Nói: chạy tự động (TTS → beep → ghi âm → tự chuyển câu). Cần 1 lần bấm
+// "Bắt đầu" để trình duyệt cho phép mic + phát âm thanh.
+const isSpeaking = computed(() => total > 0 && props.questions.every((q) => q.skill === 'speaking'));
+const speakingStarted = ref(false);
+
+function onSpeakingDone() {
+    if (current.value < total - 1) {
+        setTimeout(() => current.value++, 900); // nghỉ ngắn rồi câu sau tự chạy
+    } else {
+        setTimeout(() => submit(), 900); // câu cuối xong → tự nộp
+    }
+}
+
 const currentQuestion = computed(() => props.questions[current.value]);
 const progress = computed(() => Math.round(((current.value + 1) / total) * 100));
 const isLast = computed(() => current.value === total - 1);
@@ -79,40 +92,54 @@ function submit() {
         <main class="mx-auto max-w-2xl px-6 py-8">
             <p class="mb-4 text-sm font-semibold text-slate-500">{{ set.title }}</p>
 
-            <!-- Chỉ hiện 1 câu -->
-            <QuestionCard
-                :key="currentQuestion.id"
-                :question="currentQuestion"
-                :index="current"
-                v-model:answer="answers[currentQuestion.id]"
-            />
-
-            <!-- Điều hướng -->
-            <div class="mt-6 flex items-center justify-between gap-3">
-                <button
-                    @click="go(current - 1)"
-                    :disabled="current === 0"
-                    class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-40"
-                >← Trước</button>
-
-                <QuestionNav :items="navItems" :current="current" @jump="go" />
-
-                <button
-                    v-if="!isLast"
-                    @click="go(current + 1)"
-                    class="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
-                >Tiếp →</button>
-                <button
-                    v-else
-                    @click="submit"
-                    :disabled="form.processing"
-                    class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
-                >{{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}</button>
+            <!-- Bài Nói: màn bắt đầu (1 lần) -->
+            <div v-if="isSpeaking && !speakingStarted" class="rounded-2xl bg-white p-8 text-center ring-1 ring-slate-200">
+                <div class="text-4xl">🗣️</div>
+                <h2 class="mt-3 text-xl font-bold text-slate-900">Bài thi Nói tự động</h2>
+                <p class="mx-auto mt-2 max-w-md text-sm text-slate-500">
+                    Hệ thống sẽ <b>tự đọc đề</b>, phát tiếng <b>"beep"</b>, rồi <b>tự ghi âm</b> và
+                    <b>tự chuyển câu</b> cho tới hết bài. Hãy đảm bảo micro đã bật và ở nơi yên tĩnh.
+                </p>
+                <button @click="speakingStarted = true"
+                        class="mt-6 rounded-xl bg-brand-600 px-8 py-3 text-sm font-semibold text-white hover:bg-brand-700">
+                    ▶ Bắt đầu
+                </button>
             </div>
 
-            <div class="mt-6 text-center">
-                <button v-if="!isLast" @click="submit" :disabled="form.processing" class="text-xs text-slate-400 hover:text-red-600">Nộp bài sớm</button>
-            </div>
+            <template v-else>
+                <!-- Chỉ hiện 1 câu -->
+                <QuestionCard
+                    :key="currentQuestion.id"
+                    :question="currentQuestion"
+                    :index="current"
+                    :autostart="isSpeaking && speakingStarted"
+                    v-model:answer="answers[currentQuestion.id]"
+                    @speaking-done="onSpeakingDone"
+                />
+
+                <!-- Bài Nói: chạy tự động, không có nút điều hướng -->
+                <div v-if="isSpeaking" class="mt-6 text-center text-sm text-slate-400">
+                    Bài Nói đang chạy tự động — vui lòng nói khi có tín hiệu ghi âm.
+                </div>
+
+                <!-- Các kỹ năng khác: điều hướng thủ công -->
+                <template v-else>
+                    <div class="mt-6 flex items-center justify-between gap-3">
+                        <button @click="go(current - 1)" :disabled="current === 0"
+                                class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-40">← Trước</button>
+                        <QuestionNav :items="navItems" :current="current" @jump="go" />
+                        <button v-if="!isLast" @click="go(current + 1)"
+                                class="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Tiếp →</button>
+                        <button v-else @click="submit" :disabled="form.processing"
+                                class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                            {{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}
+                        </button>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button v-if="!isLast" @click="submit" :disabled="form.processing" class="text-xs text-slate-400 hover:text-red-600">Nộp bài sớm</button>
+                    </div>
+                </template>
+            </template>
         </main>
     </div>
 </template>
