@@ -37,7 +37,10 @@ function logout() {
                         >{{ n.label }}</Link>
                     </nav>
                 </div>
-                <button @click="logout" class="text-sm text-slate-300 hover:text-white">Đăng xuất</button>
+                <div class="flex items-center gap-3">
+                    <a href="/dashboard" class="text-sm text-slate-300 hover:text-white">Trang học viên</a>
+                    <button @click="logout" class="text-sm text-slate-300 hover:text-white">Đăng xuất</button>
+                </div>
             </div>
         </header>
 
