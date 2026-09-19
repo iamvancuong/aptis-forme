@@ -106,11 +106,18 @@ class TrialController extends Controller
             ->where('is_public', true)
             ->with('quiz')
             ->withCount('questions')
+            ->orderBy('order')->orderBy('id')
             ->get()
-            ->filter(fn ($s) => $s->questions_count > 0);
+            ->filter(fn ($s) => $s->questions_count > 0)
+            ->values();
 
         if ($sets->isEmpty()) {
             return null;
+        }
+
+        // Writing: dùng BÀI SỐ 2 (bỏ bài 1 "Form Filling" mang tính demo).
+        if ($skill === 'writing') {
+            return $sets->get(1) ?? $sets->first();
         }
 
         $part1 = $sets->filter(fn ($s) => (int) $s->quiz->part === 1)
