@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import QuestionCard from '../../components/QuestionCard.vue';
+import QuestionNav from '../../components/QuestionNav.vue';
 
 const props = defineProps({
     mockTest: Object,
@@ -56,6 +57,12 @@ function answered(item) {
     return true;
 }
 
+const navItems = computed(() => flat.map((item) => ({
+    label: item.question.stem || item.question.title,
+    group: 'Part ' + item.part,
+    answered: answered(item),
+})));
+
 function submit() {
     if (submitting.value) return;
     submitting.value = true;
@@ -96,6 +103,7 @@ function submit() {
             <div class="mt-6 flex items-center justify-between gap-3">
                 <button @click="go(current - 1)" :disabled="current === 0"
                         class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-40">← Trước</button>
+                <QuestionNav :items="navItems" :current="current" @jump="go" />
                 <button v-if="!isLast" @click="go(current + 1)"
                         class="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Tiếp →</button>
                 <button v-else @click="submit" :disabled="submitting"
@@ -104,18 +112,8 @@ function submit() {
                 </button>
             </div>
 
-            <div class="mt-8 flex flex-wrap justify-center gap-2">
-                <button v-for="(item, i) in flat" :key="i" @click="go(i)"
-                        class="grid h-8 w-8 place-items-center rounded-lg text-xs font-medium ring-1 transition"
-                        :class="i === current
-                            ? 'bg-brand-600 text-white ring-brand-600'
-                            : answered(item) ? 'bg-brand-50 text-brand-700 ring-brand-200' : 'bg-white text-slate-500 ring-slate-200 hover:ring-brand-300'">
-                    {{ i + 1 }}
-                </button>
-            </div>
-
             <div class="mt-6 text-center">
-                <button @click="submit" :disabled="submitting" class="text-sm text-slate-400 hover:text-red-600">Nộp bài sớm</button>
+                <button v-if="!isLast" @click="submit" :disabled="submitting" class="text-xs text-slate-400 hover:text-red-600">Nộp bài sớm</button>
             </div>
         </main>
     </div>

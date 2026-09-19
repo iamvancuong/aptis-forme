@@ -2,6 +2,7 @@
 import { Head, useForm } from '@inertiajs/vue3';
 import { computed, reactive, ref } from 'vue';
 import QuestionCard from '../../components/QuestionCard.vue';
+import QuestionNav from '../../components/QuestionNav.vue';
 
 const props = defineProps({
     set: Object,
@@ -40,6 +41,11 @@ function answered(qid) {
 function go(i) {
     if (i >= 0 && i < total) current.value = i;
 }
+
+const navItems = computed(() => props.questions.map((q) => ({
+    label: q.stem || q.title,
+    answered: answered(q.id),
+})));
 
 function submit() {
     form.duration_seconds = Math.round((Date.now() - startedAt) / 1000);
@@ -84,6 +90,8 @@ function submit() {
                     class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-40"
                 >← Trước</button>
 
+                <QuestionNav :items="navItems" :current="current" @jump="go" />
+
                 <button
                     v-if="!isLast"
                     @click="go(current + 1)"
@@ -97,22 +105,9 @@ function submit() {
                 >{{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}</button>
             </div>
 
-            <!-- Điều hướng nhanh theo số câu -->
-            <div class="mt-8 flex flex-wrap justify-center gap-2">
-                <button
-                    v-for="(q, i) in questions"
-                    :key="q.id"
-                    @click="go(i)"
-                    class="grid h-8 w-8 place-items-center rounded-lg text-xs font-medium ring-1 transition"
-                    :class="i === current
-                        ? 'bg-brand-600 text-white ring-brand-600'
-                        : answered(q.id)
-                            ? 'bg-brand-50 text-brand-700 ring-brand-200'
-                            : 'bg-white text-slate-500 ring-slate-200 hover:ring-brand-300'"
-                >{{ i + 1 }}</button>
+            <div class="mt-6 text-center">
+                <button v-if="!isLast" @click="submit" :disabled="form.processing" class="text-xs text-slate-400 hover:text-red-600">Nộp bài sớm</button>
             </div>
-
-            <p class="mt-6 text-center text-xs text-slate-400">Bạn có thể chuyển câu bất kỳ. Bấm "Nộp bài" ở câu cuối để chấm.</p>
         </main>
     </div>
 </template>
