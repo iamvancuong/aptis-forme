@@ -51,6 +51,16 @@ Route::middleware(['auth', 'user.blocked', 'user.expired', 'session.limit', 'pas
     Route::post('/practice/{set}/attempt', [PracticeController::class, 'store'])
         ->middleware('throttle:10,1')->name('practice.store');
 
+    // Thi thử (Mock Test) — reading/listening (writing/speaking chờ Pha 4 AI)
+    Route::get('/mock-test/{skill}', [\App\Http\Controllers\MockTestController::class, 'create'])->name('mock-test.create');
+    Route::post('/mock-test', [\App\Http\Controllers\MockTestController::class, 'start'])->name('mock-test.start');
+    Route::get('/mock-test/{mockTest}/exam', [\App\Http\Controllers\MockTestController::class, 'show'])->name('mock-test.show');
+    Route::post('/mock-test/{mockTest}/submit', [\App\Http\Controllers\MockTestController::class, 'submit'])->name('mock-test.submit');
+    Route::get('/mock-test/{mockTest}/result', [\App\Http\Controllers\MockTestController::class, 'result'])->name('mock-test.result');
+
+    // Bảng xếp hạng
+    Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard.index');
+
     // Lịch sử làm bài
     Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{attempt}', [\App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');

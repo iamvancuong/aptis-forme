@@ -24,6 +24,7 @@ function logout() {
             <div class="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
                 <div class="font-bold text-slate-900">APTIS V2</div>
                 <div class="flex items-center gap-4 text-sm">
+                    <Link href="/leaderboard" class="text-slate-600 hover:text-indigo-600">Xếp hạng</Link>
                     <Link href="/history" class="text-slate-600 hover:text-indigo-600">Lịch sử</Link>
                     <span class="text-slate-600">Xin chào, <b>{{ user?.name }}</b></span>
                     <button @click="logout" class="text-slate-500 hover:text-red-600">Đăng xuất</button>
@@ -37,6 +38,20 @@ function logout() {
             </div>
             <div v-if="flashWarning" class="mb-6 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 ring-1 ring-amber-200">
                 {{ flashWarning }}
+            </div>
+
+            <!-- Thi thử -->
+            <div class="mb-8 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-white">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold">Thi thử full đề có tính giờ</h2>
+                        <p class="text-sm text-indigo-100">Mô phỏng phòng thi thật, chấm điểm ngay.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <Link href="/mock-test/reading" class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-50">Thi Reading</Link>
+                        <Link href="/mock-test/listening" class="rounded-lg bg-white/15 px-4 py-2 text-sm font-semibold text-white hover:bg-white/25">Thi Listening</Link>
+                    </div>
+                </div>
             </div>
 
             <h1 class="text-2xl font-bold text-slate-900">Luyện tập theo kỹ năng</h1>
