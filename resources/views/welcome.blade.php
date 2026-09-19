@@ -22,8 +22,8 @@
                     Luyện đúng trọng tâm, thi thử sát đề thật và được <b class="text-slate-800">AI chấm Writing &amp; Speaking</b> theo tiêu chí APTIS — tiến bộ nhanh, chắc điểm.
                 </p>
                 <div class="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                    <a href="#hoc-thu" class="group rounded-2xl bg-gradient-to-r from-brand-600 to-violet-600 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-brand-600/30 transition hover:-translate-y-0.5">
-                        Học thử miễn phí <span class="ml-1 inline-block transition group-hover:translate-x-1">→</span>
+                    <a href="{{ route('trial.show', 'reading') }}" class="group rounded-2xl bg-gradient-to-r from-brand-600 to-violet-600 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-brand-600/30 transition hover:-translate-y-0.5">
+                        Học thử ngay <span class="ml-1 inline-block transition group-hover:translate-x-1">→</span>
                     </a>
                     <a href="#bang-gia" class="rounded-2xl bg-white px-7 py-4 text-sm font-bold text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50">
                         Xem bảng giá
@@ -152,7 +152,7 @@
                 <h2 class="text-3xl font-bold sm:text-4xl">Bắt đầu chinh phục APTIS hôm nay</h2>
                 <p class="mx-auto mt-3 max-w-xl text-white/80">Học thử miễn phí — không cần thẻ, không cần đăng nhập.</p>
                 <div class="mt-8 flex flex-wrap justify-center gap-3">
-                    <a href="#hoc-thu" class="rounded-2xl bg-white px-7 py-4 text-sm font-bold text-brand-700 hover:bg-brand-50">Học thử miễn phí</a>
+                    <a href="{{ route('trial.show', 'reading') }}" class="rounded-2xl bg-white px-7 py-4 text-sm font-bold text-brand-700 hover:bg-brand-50">Học thử ngay</a>
                     <a href="{{ route('register') }}" class="rounded-2xl bg-white/10 px-7 py-4 text-sm font-bold text-white ring-1 ring-white/30 hover:bg-white/20">Đăng ký ngay</a>
                 </div>
             </div>
