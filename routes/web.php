@@ -50,6 +50,14 @@ Route::middleware(['auth', 'user.blocked', 'user.expired', 'session.limit', 'pas
     Route::get('/practice/{set}', [PracticeController::class, 'show'])->name('practice.show');
     Route::post('/practice/{set}/attempt', [PracticeController::class, 'store'])
         ->middleware('throttle:10,1')->name('practice.store');
+
+    // Lịch sử làm bài
+    Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/{attempt}', [\App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');
+
+    // Audio câu hỏi — signed trên nền auth (link copy vô dụng với người ngoài).
+    Route::get('/media/questions/{question}/audio/{index?}', [\App\Http\Controllers\MediaController::class, 'questionAudio'])
+        ->middleware('signed')->whereNumber('index')->name('media.question-audio');
 });
 
 // ── Admin (chỉ Học viên + Thanh toán) ───────────────────────────────────

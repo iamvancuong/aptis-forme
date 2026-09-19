@@ -24,6 +24,7 @@ function logout() {
             <div class="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
                 <div class="font-bold text-slate-900">APTIS V2</div>
                 <div class="flex items-center gap-4 text-sm">
+                    <Link href="/history" class="text-slate-600 hover:text-indigo-600">Lịch sử</Link>
                     <span class="text-slate-600">Xin chào, <b>{{ user?.name }}</b></span>
                     <button @click="logout" class="text-slate-500 hover:text-red-600">Đăng xuất</button>
                 </div>

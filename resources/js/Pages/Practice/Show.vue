@@ -1,21 +1,29 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
 import { reactive } from 'vue';
+import QuestionCard from '../../components/QuestionCard.vue';
 
 const props = defineProps({
     set: Object,
     questions: Array,
 });
 
-// answers[questionId] = [chỉ số lựa chọn theo từng chỗ trống]
+// Khởi tạo answer đúng shape mà GradingService mong đợi cho từng dạng.
 const answers = reactive({});
-props.questions.forEach((q) => {
+for (const q of props.questions) {
+    const m = q.metadata || {};
     if (q.type === 'fill_in_blanks_mc') {
-        answers[q.id] = (q.metadata.paragraphs || []).map(() => null);
-    } else {
+        answers[q.id] = (m.paragraphs || []).map(() => null);
+    } else if (q.type === 'sentence_ordering') {
+        answers[q.id] = (m.sentences || []).slice(1); // thứ tự hiện tại (đã xáo ở server)
+    } else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)) {
+        answers[q.id] = {};
+    } else if (['writing', 'speaking'].includes(q.skill)) {
         answers[q.id] = null;
+    } else {
+        answers[q.id] = ''; // choice đơn
     }
-});
+}
 
 const startedAt = Date.now();
 const form = useForm({ answers, duration_seconds: 0 });
@@ -44,41 +52,13 @@ function submit() {
             <h1 class="text-xl font-bold text-slate-900">{{ set.title }}</h1>
 
             <form @submit.prevent="submit" class="mt-6 space-y-6">
-                <section
-                    v-for="(q, qi) in questions"
+                <QuestionCard
+                    v-for="(q, i) in questions"
                     :key="q.id"
-                    class="rounded-2xl bg-white p-5 ring-1 ring-slate-200"
-                >
-                    <div class="text-sm font-semibold text-slate-700">Câu {{ qi + 1 }}. {{ q.stem }}</div>
-
-                    <!-- fill_in_blanks_mc: mỗi đoạn có [BLANK] → chọn 1 đáp án -->
-                    <div v-if="q.type === 'fill_in_blanks_mc'" class="mt-3 space-y-3">
-                        <div
-                            v-for="(para, bi) in q.metadata.paragraphs"
-                            :key="bi"
-                            class="flex flex-wrap items-center gap-2 text-sm text-slate-800"
-                        >
-                            <span>{{ para.split('[BLANK]')[0] }}</span>
-                            <select
-                                v-model="answers[q.id][bi]"
-                                class="rounded-md border border-slate-300 px-2 py-1 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-300 focus:outline-none"
-                            >
-                                <option :value="null" disabled>— chọn —</option>
-                                <option
-                                    v-for="(opt, oi) in q.metadata.choices[bi]"
-                                    :key="oi"
-                                    :value="String(oi)"
-                                >{{ opt }}</option>
-                            </select>
-                            <span>{{ para.split('[BLANK]')[1] }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Type khác: Pha 1 chưa hỗ trợ render -->
-                    <div v-else class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
-                        Dạng câu "{{ q.type }}" sẽ được hỗ trợ ở pha sau.
-                    </div>
-                </section>
+                    :question="q"
+                    :index="i"
+                    v-model:answer="answers[q.id]"
+                />
 
                 <button
                     type="submit"
