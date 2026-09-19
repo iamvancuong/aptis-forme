@@ -36,50 +36,36 @@
                 </div>
             </div>
 
-            <div class="animate-fade-up relative mx-auto w-full max-w-md">
-                <div class="animate-floaty rounded-3xl bg-white p-6 shadow-2xl shadow-slate-300/50 ring-1 ring-slate-100">
+            {{-- Cột phải: KHU HỌC THỬ (bấm vào học ngay) --}}
+            <div id="hoc-thu" class="animate-fade-up mx-auto w-full max-w-md">
+                <div class="rounded-3xl bg-white p-6 shadow-2xl shadow-slate-300/50 ring-1 ring-slate-100">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wide text-brand-600">Reading · Part 1</span>
-                        <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">Câu 1/4</span>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Học thử miễn phí</h3>
+                            <p class="text-xs text-slate-500">Đề thật · không cần đăng nhập</p>
+                        </div>
+                        <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Miễn phí</span>
                     </div>
-                    <div class="mt-3 h-1.5 w-full rounded-full bg-slate-100"><div class="h-1.5 w-1/4 rounded-full bg-brand-500"></div></div>
-                    <p class="mt-4 text-sm font-semibold text-slate-800">In the ___, I cycle to work.</p>
-                    <div class="mt-3 space-y-2">
-                        <div class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600">market</div>
-                        <div class="flex items-center justify-between rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">morning <span>✓</span></div>
-                        <div class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-600">sun</div>
+                    <div class="mt-4 space-y-2">
+                        @foreach ([
+                            ['reading', '📖', 'Reading', 'Đọc hiểu', 'bg-sky-100'],
+                            ['listening', '🎧', 'Listening', 'Nghe hiểu', 'bg-violet-100'],
+                            ['grammar', '✏️', 'Grammar', 'Ngữ pháp & từ vựng', 'bg-emerald-100'],
+                            ['writing', '📝', 'Writing', 'AI chấm bài viết', 'bg-amber-100'],
+                            ['speaking', '🗣️', 'Speaking', 'AI chấm phát âm', 'bg-rose-100'],
+                        ] as $sk)
+                            <a href="{{ route('trial.show', $sk[0]) }}"
+                               class="group flex items-center gap-3 rounded-2xl border border-slate-100 p-3 transition hover:border-brand-200 hover:bg-brand-50">
+                                <span class="grid h-11 w-11 flex-shrink-0 place-items-center rounded-xl {{ $sk[4] }} text-xl">{{ $sk[1] }}</span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-sm font-semibold text-slate-900">{{ $sk[2] }}</span>
+                                    <span class="block text-xs text-slate-400">{{ $sk[3] }}</span>
+                                </span>
+                                <span class="flex-shrink-0 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition group-hover:bg-brand-600 group-hover:text-white">Làm thử →</span>
+                            </a>
+                        @endforeach
                     </div>
-                    <div class="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700">✓ Chính xác! Xem giải thích →</div>
                 </div>
-                <div class="animate-floaty absolute -left-6 top-8 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-slate-100" style="animation-delay: -2s">
-                    <div class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-violet-100 text-violet-600">🤖</span><div><div class="text-xs font-bold text-slate-800">AI chấm Writing</div><div class="text-[11px] text-slate-400">CEFR B2 · 90%</div></div></div>
-                </div>
-                <div class="animate-floaty absolute -right-4 bottom-6 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-slate-100" style="animation-delay: -4s">
-                    <div class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-amber-100 text-amber-600">⏱️</span><div><div class="text-xs font-bold text-slate-800">Thi thử tính giờ</div><div class="text-[11px] text-slate-400">Full đề · 35:00</div></div></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ══════════ HỌC THỬ (đồng bộ màu brand) ══════════ --}}
-    <section id="hoc-thu" class="mx-auto max-w-6xl px-6 py-10">
-        <div class="rounded-[2rem] bg-gradient-to-br from-brand-50 to-violet-50 p-8 ring-1 ring-brand-100 sm:p-10">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-slate-900 sm:text-3xl">Học thử miễn phí — đề thật</h2>
-                <p class="mx-auto mt-2 max-w-xl text-sm text-slate-600">Không cần đăng nhập. Chọn một kỹ năng để làm thử ngay, mỗi kỹ năng một lượt.</p>
-            </div>
-            <div class="mx-auto mt-7 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                @foreach ([
-                    ['reading', '📖', 'Reading'], ['listening', '🎧', 'Listening'], ['grammar', '✏️', 'Grammar'],
-                    ['writing', '📝', 'Writing'], ['speaking', '🗣️', 'Speaking'],
-                ] as $sk)
-                    <a href="{{ route('trial.show', $sk[0]) }}"
-                       class="group flex flex-col items-center gap-2 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-lg hover:ring-brand-300">
-                        <span class="text-3xl transition group-hover:scale-110">{{ $sk[1] }}</span>
-                        <span class="text-sm font-semibold text-slate-800">{{ $sk[2] }}</span>
-                        <span class="text-xs font-medium text-brand-600">Làm thử →</span>
-                    </a>
-                @endforeach
             </div>
         </div>
     </section>
