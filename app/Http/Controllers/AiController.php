@@ -40,25 +40,22 @@ class AiController extends Controller
                 'student_answer' => $answer->answer,
             ], $user->target_level ?? 'B2');
 
-            DB::transaction(function () use ($answer, $result, $user, $question) {
-                $overall = $result['feedback']['overall_score']
-                    ?? ($result['feedback']['scores']['overall_score'] ?? null);
+            // overall_score của Writing theo thang 0-5 → quy về % (0-100).
+            $overall = $result['feedback']['overall_score']
+                ?? ($result['feedback']['scores']['overall_score'] ?? null);
+            $percent = $overall !== null ? round(min($overall, 5) / 5 * 100, 1) : null;
 
+            DB::transaction(function () use ($answer, $result, $percent, $user, $question) {
                 $answer->update([
                     'ai_metadata' => $result,
-                    'score' => $overall,
+                    'score' => $percent,
                     'grading_status' => 'ai_graded',
                 ]);
 
                 $user->recordWritingAiUsage((int) $question->part);
             });
 
-            // Cập nhật điểm tổng của lượt làm (theo thang điểm câu).
-            $attempt = $answer->attempt->refresh();
-            $attempt->load('answers');
-            $possible = $attempt->answers->count() * 20; // writing thang ~20
-            $earned = $attempt->answers->sum('score');
-            $attempt->update(['score' => $possible > 0 ? round($earned / $possible * 100, 2) : null]);
+            $this->recomputeAttemptScore($answer->attempt);
 
             return back()->with('success', 'Đã chấm AI xong!');
         } catch (\Throwable $e) {
@@ -66,6 +63,16 @@ class AiController extends Controller
 
             return back()->with('error', 'Lỗi kết nối AI. Vui lòng thử lại sau.');
         }
+    }
+
+    /** Điểm tổng lượt Writing/Speaking = trung bình các câu ĐÃ chấm AI (thang %). */
+    private function recomputeAttemptScore($attempt): void
+    {
+        $attempt->refresh()->load('answers');
+        $graded = $attempt->answers->where('grading_status', 'ai_graded');
+        $attempt->update([
+            'score' => $graded->count() ? round($graded->avg('score'), 1) : null,
+        ]);
     }
 
     /** Chấm AI một câu Speaking: phiên âm (Whisper) rồi chấm. */
@@ -106,12 +113,17 @@ class AiController extends Controller
 
             $result['transcript'] = $transcript;
 
+            // overall_score_10 (0-10) → % (0-100).
             $overall = $result['feedback']['overall_score_10'] ?? null;
+            $percent = $overall !== null ? round(min($overall, 10) / 10 * 100, 1) : null;
+
             $answer->update([
                 'ai_metadata' => $result,
-                'score' => $overall,
+                'score' => $percent,
                 'grading_status' => 'ai_graded',
             ]);
+
+            $this->recomputeAttemptScore($answer->attempt);
 
             return back()->with('success', 'Đã chấm AI phần Nói xong!');
         } catch (\Throwable $e) {
