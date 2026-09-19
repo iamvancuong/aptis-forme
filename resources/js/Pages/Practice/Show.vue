@@ -67,7 +67,7 @@ function submit() {
             <div class="mx-auto max-w-2xl px-6 py-3">
                 <div class="flex items-center justify-between">
                     <a href="/dashboard" class="text-sm text-slate-500 hover:text-slate-800">← Thoát</a>
-                    <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">{{ set.skill }} · Part {{ set.part }}</div>
+                    <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">{{ set.skill }} · Part {{ currentQuestion.part }}</div>
                     <span class="text-sm font-medium text-slate-700">Câu {{ current + 1 }}/{{ total }}</span>
                 </div>
                 <div class="mt-2 h-1.5 rounded-full bg-slate-100">
