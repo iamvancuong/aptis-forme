@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Chấm AI Writing qua OpenAI Chat Completions (JSON mode).
@@ -83,6 +84,90 @@ class AiService
             'usage' => [
                 'input_tokens' => $result['usage']['prompt_tokens'] ?? null,
                 'output_tokens' => $result['usage']['completion_tokens'] ?? null,
+                'total_tokens' => $result['usage']['total_tokens'] ?? null,
+                'model' => $this->model,
+            ],
+        ];
+    }
+
+    // ── SPEAKING ─────────────────────────────────────────────────────────
+    /** Audio (trên disk public) → text bằng Whisper. */
+    public function transcribe(string $audioPath): string
+    {
+        if (! $this->isConfigured()) {
+            throw new \RuntimeException('Chưa cấu hình OPENAI_API_KEY.');
+        }
+
+        $disk = Storage::disk('public');
+        abort_unless($disk->exists($audioPath), 404, "Không tìm thấy audio: {$audioPath}");
+
+        $contents = $disk->get($audioPath);
+        $model = config('services.openai.transcribe_model', 'whisper-1');
+
+        $response = Http::withToken($this->apiKey)
+            ->timeout(120)
+            ->attach('file', $contents, basename($audioPath))
+            ->post('https://api.openai.com/v1/audio/transcriptions', ['model' => $model]);
+
+        if ($response->failed()) {
+            Log::error('Whisper error', ['status' => $response->status(), 'body' => $response->body()]);
+            throw new \RuntimeException('Phiên âm thất bại.');
+        }
+
+        return trim((string) $response->json('text'));
+    }
+
+    /** @return array{feedback: array, usage: array} */
+    public function gradeSpeaking(array $data, ?string $targetLevel = 'B2'): array
+    {
+        $part = (int) ($data['part'] ?? 1);
+        $question = (string) ($data['question_stem'] ?? '');
+        $metadata = $data['metadata'] ?? [];
+        $transcript = trim((string) ($data['transcript'] ?? ''));
+
+        if ($transcript === '') {
+            throw new \RuntimeException('Transcript rỗng, không có gì để chấm.');
+        }
+        if (mb_strlen($transcript) > 4000) {
+            $transcript = mb_substr($transcript, 0, 4000) . '... [cắt bớt]';
+        }
+
+        $systemPrompt = view('prompts.speaking_system', compact('part', 'targetLevel'))->render();
+        $userPrompt = view('prompts.speaking_user', compact('part', 'question', 'metadata', 'transcript'))->render();
+
+        if (! $this->isConfigured()) {
+            return ['feedback' => ['scores' => [], 'overall_score_10' => 0, 'cefr_level' => 'A2', 'feedback' => [], 'improved_sample' => '', 'suggestions' => []], 'usage' => ['model' => 'mock-mode']];
+        }
+
+        $response = Http::withToken($this->apiKey)
+            ->timeout(45)
+            ->retry(2, 2000, fn ($e) => $e->getCode() === 429)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => $this->model,
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $userPrompt],
+                ],
+                'response_format' => ['type' => 'json_object'],
+                'temperature' => 0.3,
+                'max_tokens' => 2000,
+            ]);
+
+        if ($response->failed()) {
+            Log::error('OpenAI speaking error', ['status' => $response->status(), 'body' => $response->body()]);
+            throw new \RuntimeException('AI Service failed to grade speaking.');
+        }
+
+        $result = $response->json();
+        $feedback = json_decode($result['choices'][0]['message']['content'] ?? '{}', true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException('AI returned invalid JSON.');
+        }
+
+        return [
+            'feedback' => $feedback,
+            'usage' => [
                 'total_tokens' => $result['usage']['total_tokens'] ?? null,
                 'model' => $this->model,
             ],

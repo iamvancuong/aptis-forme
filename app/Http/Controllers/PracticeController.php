@@ -41,13 +41,23 @@ class PracticeController extends Controller
         abort_unless($set->is_public, 404);
 
         $data = $request->validate([
-            'answers' => ['required', 'array'],
+            'answers' => ['nullable', 'array'],
             'duration_seconds' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $set->load(['quiz', 'questions']);
+        $answers = $data['answers'] ?? [];
 
-        $result = $this->grading->gradeSet($set->questions, $data['answers'], 'practice');
+        $result = $this->grading->gradeSet($set->questions, $answers, 'practice');
+
+        // Speaking: lưu file ghi âm đã upload, thay answer bằng đường dẫn.
+        foreach ($result['attempt_answers'] as &$a) {
+            $q = $set->questions->firstWhere('id', $a['question_id']);
+            if ($q && $q->skill === 'speaking' && $request->hasFile("answers.{$q->id}")) {
+                $a['answer'] = $request->file("answers.{$q->id}")->store('speaking_attempts', 'public');
+            }
+        }
+        unset($a);
 
         $attempt = Attempt::create([
             'user_id' => $request->user()->id,

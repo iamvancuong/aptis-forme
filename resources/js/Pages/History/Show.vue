@@ -6,9 +6,10 @@ import AppLayout from '../../Layouts/AppLayout.vue';
 const props = defineProps({ attempt: Object, items: Array });
 
 const grading = ref(null);
-function gradeAI(answerId) {
+function gradeAI(answerId, skill) {
     grading.value = answerId;
-    router.post(`/ai/grade-writing/${answerId}`, {}, {
+    const url = skill === 'speaking' ? `/ai/grade-speaking/${answerId}` : `/ai/grade-writing/${answerId}`;
+    router.post(url, {}, {
         preserveScroll: true,
         onFinish: () => (grading.value = null),
     });
@@ -69,11 +70,32 @@ function fmtKey(k) {
                     <div v-if="it.answer_key?.explanation" class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Giải thích:</dt><dd class="text-slate-600" v-html="it.answer_key.explanation"></dd></div>
                 </dl>
 
+                <!-- Chấm AI Speaking -->
+                <template v-if="it.skill === 'speaking'">
+                    <button
+                        v-if="!it.ai"
+                        @click="gradeAI(it.answer_id, 'speaking')"
+                        :disabled="grading === it.answer_id"
+                        class="mt-3 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
+                    >{{ grading === it.answer_id ? 'AI đang chấm…' : '🎙 Chấm bằng AI' }}</button>
+                    <div v-else class="mt-4 rounded-xl bg-brand-50 p-4 ring-1 ring-brand-200">
+                        <div class="flex flex-wrap items-center gap-3 text-xs">
+                            <span class="rounded-full bg-brand-600 px-2.5 py-1 font-semibold text-white">CEFR {{ it.ai.cefr_level }}</span>
+                            <span class="rounded-full bg-white px-2.5 py-1 font-medium text-slate-700 ring-1 ring-slate-200">Tổng: <b class="text-brand-700">{{ it.ai.overall_score_10 }}/10</b></span>
+                            <span v-for="(v, k) in it.ai.scores" :key="k" class="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">{{ k }}: {{ v }}/5</span>
+                        </div>
+                        <dl class="mt-3 space-y-1 text-sm">
+                            <div v-for="(v, k) in it.ai.feedback" :key="k"><dt class="inline font-medium text-slate-600">{{ k }}:</dt> <dd class="inline text-slate-700">{{ v }}</dd></div>
+                        </dl>
+                        <p v-if="it.ai.improved_sample" class="mt-3 rounded-lg bg-white p-3 text-sm text-emerald-700 ring-1 ring-slate-200"><b>Mẫu hay hơn:</b> {{ it.ai.improved_sample }}</p>
+                    </div>
+                </template>
+
                 <!-- Chấm AI Writing -->
                 <template v-if="it.skill === 'writing'">
                     <button
                         v-if="!it.ai"
-                        @click="gradeAI(it.answer_id)"
+                        @click="gradeAI(it.answer_id, 'writing')"
                         :disabled="grading === it.answer_id"
                         class="mt-3 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
                     >{{ grading === it.answer_id ? 'AI đang chấm…' : '🤖 Chấm bằng AI' }}</button>

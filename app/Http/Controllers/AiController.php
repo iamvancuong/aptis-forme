@@ -67,4 +67,50 @@ class AiController extends Controller
             return back()->with('error', 'Lỗi kết nối AI. Vui lòng thử lại sau.');
         }
     }
+
+    /** Chấm AI một câu Speaking: phiên âm (Whisper) rồi chấm. */
+    public function gradeSpeaking(Request $request, AttemptAnswer $answer)
+    {
+        $user = $request->user();
+        $answer->load('attempt');
+        abort_unless($answer->attempt->user_id === $user->id || $user->isAdmin(), 403);
+
+        $question = $answer->question;
+        abort_unless($question && $question->skill === 'speaking', 400, 'Không phải câu Nói.');
+
+        if ($answer->grading_status === 'ai_graded') {
+            return back()->with('warning', 'Bài này đã được AI chấm.');
+        }
+
+        $audioPath = is_string($answer->answer) ? $answer->answer : null;
+        if (! $audioPath) {
+            return back()->with('error', 'Không tìm thấy file ghi âm.');
+        }
+
+        try {
+            $transcript = $this->ai->transcribe($audioPath);
+
+            $result = $this->ai->gradeSpeaking([
+                'part' => $question->part,
+                'question_stem' => $question->stem,
+                'metadata' => $question->metadata,
+                'transcript' => $transcript,
+            ], $user->target_level ?? 'B2');
+
+            $result['transcript'] = $transcript;
+
+            $overall = $result['feedback']['overall_score_10'] ?? null;
+            $answer->update([
+                'ai_metadata' => $result,
+                'score' => $overall,
+                'grading_status' => 'ai_graded',
+            ]);
+
+            return back()->with('success', 'Đã chấm AI phần Nói xong!');
+        } catch (\Throwable $e) {
+            Log::error('AI grade speaking lỗi: ' . $e->getMessage());
+
+            return back()->with('error', 'Lỗi chấm AI phần Nói: ' . $e->getMessage());
+        }
+    }
 }
