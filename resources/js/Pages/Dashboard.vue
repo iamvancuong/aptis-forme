@@ -1,81 +1,48 @@
 <script setup>
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, Link } from '@inertiajs/vue3';
+import AppLayout from '../Layouts/AppLayout.vue';
 
-defineProps({
-    skills: Array,
-});
+defineProps({ skills: Array });
 
-const page = usePage();
-const user = computed(() => page.props.auth?.user);
-const flashSuccess = computed(() => page.props.flash?.success);
-const flashWarning = computed(() => page.props.flash?.warning);
-
-function logout() {
-    router.post('/logout');
-}
+const skillMeta = {
+    reading: ['📖', 'Reading'], listening: ['🎧', 'Listening'], grammar: ['✏️', 'Grammar'],
+    writing: ['📝', 'Writing'], speaking: ['🗣️', 'Speaking'],
+};
 </script>
 
 <template>
     <Head title="Trang chủ" />
-
-    <div class="min-h-screen bg-slate-50">
-        <header class="bg-white ring-1 ring-slate-200">
-            <div class="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
-                <div class="font-bold text-slate-900">APTIS V2</div>
-                <div class="flex items-center gap-4 text-sm">
-                    <Link href="/leaderboard" class="text-slate-600 hover:text-indigo-600">Xếp hạng</Link>
-                    <Link href="/history" class="text-slate-600 hover:text-indigo-600">Lịch sử</Link>
-                    <span class="text-slate-600">Xin chào, <b>{{ user?.name }}</b></span>
-                    <button @click="logout" class="text-slate-500 hover:text-red-600">Đăng xuất</button>
+    <AppLayout>
+        <!-- Thi thử -->
+        <div class="mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-violet-600 p-7 text-white">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold">Thi thử full đề có tính giờ</h2>
+                    <p class="mt-1 text-sm text-brand-100">Mô phỏng phòng thi thật, chấm điểm ngay.</p>
+                </div>
+                <div class="flex gap-2">
+                    <Link href="/mock-test/reading" class="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50">Thi Reading</Link>
+                    <Link href="/mock-test/listening" class="rounded-xl bg-white/15 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/30 hover:bg-white/25">Thi Listening</Link>
                 </div>
             </div>
-        </header>
+        </div>
 
-        <main class="mx-auto max-w-5xl px-6 py-10">
-            <div v-if="flashSuccess" class="mb-6 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 ring-1 ring-emerald-200">
-                {{ flashSuccess }}
-            </div>
-            <div v-if="flashWarning" class="mb-6 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 ring-1 ring-amber-200">
-                {{ flashWarning }}
-            </div>
+        <h1 class="text-2xl font-bold text-slate-900">Luyện tập theo kỹ năng</h1>
+        <p class="mt-1 text-slate-500">Nội dung bài học đồng bộ trực tiếp từ hệ thống.</p>
 
-            <!-- Thi thử -->
-            <div class="mb-8 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-white">
-                <div class="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-lg font-bold">Thi thử full đề có tính giờ</h2>
-                        <p class="text-sm text-indigo-100">Mô phỏng phòng thi thật, chấm điểm ngay.</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <Link href="/mock-test/reading" class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-50">Thi Reading</Link>
-                        <Link href="/mock-test/listening" class="rounded-lg bg-white/15 px-4 py-2 text-sm font-semibold text-white hover:bg-white/25">Thi Listening</Link>
-                    </div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div v-for="s in skills" :key="s.skill + s.part"
+                 class="group rounded-2xl bg-white p-5 ring-1 ring-slate-200 transition hover:ring-brand-300 hover:shadow-sm">
+                <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-brand-600">
+                    <span class="text-base">{{ (skillMeta[s.skill] || ['📘'])[0] }}</span>
+                    {{ (skillMeta[s.skill] || [null, s.skill])[1] }} · Part {{ s.part }}
                 </div>
+                <div class="mt-1 text-lg font-semibold text-slate-900">{{ s.sets_count }} bộ đề</div>
+                <Link v-if="s.first_set_id" :href="`/practice/${s.first_set_id}`"
+                      class="mt-3 inline-block rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700">
+                    Làm thử bộ đầu →
+                </Link>
             </div>
-
-            <h1 class="text-2xl font-bold text-slate-900">Luyện tập theo kỹ năng</h1>
-            <p class="mt-1 text-slate-500">Nội dung bài học đồng bộ trực tiếp từ hệ thống (db1).</p>
-
-            <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div
-                    v-for="s in skills"
-                    :key="s.skill + s.part"
-                    class="rounded-2xl bg-white p-5 ring-1 ring-slate-200"
-                >
-                    <div class="text-xs font-semibold uppercase tracking-wide text-indigo-600">
-                        {{ s.skill }} · Part {{ s.part }}
-                    </div>
-                    <div class="mt-1 text-lg font-semibold text-slate-900">{{ s.sets_count }} bộ đề</div>
-                    <Link
-                        v-if="s.first_set_id"
-                        :href="`/practice/${s.first_set_id}`"
-                        class="mt-3 inline-block rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
-                    >
-                        Làm thử bộ đầu →
-                    </Link>
-                </div>
-            </div>
-        </main>
-    </div>
+        </div>
+    </AppLayout>
 </template>

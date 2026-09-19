@@ -24,7 +24,8 @@ function submit() {
     <main class="min-h-screen flex items-center justify-center px-6 bg-slate-50">
         <div class="w-full max-w-sm">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-slate-900">APTIS V2</h1>
+                <span class="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-violet-600 text-lg font-bold text-white">A</span>
+                <h1 class="mt-3 text-2xl font-bold text-slate-900">APTIS V2</h1>
                 <p class="mt-1 text-sm text-slate-500">Đăng nhập để vào luyện thi</p>
             </div>
 
@@ -64,7 +65,7 @@ function submit() {
                 <button
                     type="submit"
                     :disabled="form.processing"
-                    class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+                    class="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
                 >
                     {{ form.processing ? 'Đang đăng nhập…' : 'Đăng nhập' }}
                 </button>
