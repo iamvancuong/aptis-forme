@@ -7,26 +7,27 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    /** Thứ tự hiển thị kỹ năng. */
+    private const SKILL_ORDER = ['reading', 'listening', 'grammar', 'writing', 'speaking'];
+
     public function index()
     {
-        // Nội dung đọc từ db1: mỗi quiz = 1 kỹ năng × part, kèm số bộ đề công khai.
+        // Gom nội dung (db1) theo KỸ NĂNG: mỗi kỹ năng có mấy part, tổng mấy bộ đề.
         $quizzes = Quiz::query()
             ->withCount(['sets as sets_count' => fn ($q) => $q->where('is_public', true)])
-            ->with(['sets' => fn ($q) => $q->where('is_public', true)->orderBy('order')->limit(1)])
             ->where('is_published', true)
-            ->orderBy('skill')
-            ->orderBy('part')
             ->get();
 
-        $skills = $quizzes->map(fn ($quiz) => [
-            'skill' => $quiz->skill,
-            'part' => $quiz->part,
-            'sets_count' => $quiz->sets_count,
-            'first_set_id' => $quiz->sets->first()?->id,
-        ])->values();
+        $skills = $quizzes
+            ->groupBy('skill')
+            ->map(fn ($group, $skill) => [
+                'skill' => $skill,
+                'parts_count' => $group->count(),
+                'sets_count' => (int) $group->sum('sets_count'),
+            ])
+            ->sortBy(fn ($s) => array_search($s['skill'], self::SKILL_ORDER))
+            ->values();
 
-        return Inertia::render('Dashboard', [
-            'skills' => $skills,
-        ]);
+        return Inertia::render('Dashboard', ['skills' => $skills]);
     }
 }

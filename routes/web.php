@@ -87,6 +87,9 @@ Route::middleware(['auth', 'user.blocked', 'user.expired', 'session.limit', 'pas
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // Kỹ năng → part → bộ đề
+    Route::get('/skills/{skill}', [\App\Http\Controllers\SkillController::class, 'show'])->name('skills.show');
+
     Route::get('/practice/{set}', [PracticeController::class, 'show'])->name('practice.show');
     Route::post('/practice/{set}/attempt', [PracticeController::class, 'store'])
         ->middleware('throttle:10,1')->name('practice.store');
