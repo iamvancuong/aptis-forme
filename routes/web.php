@@ -65,6 +65,14 @@ Route::middleware(['auth', 'user.blocked', 'user.expired', 'session.limit', 'pas
     Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{attempt}', [\App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');
 
+    // Hướng dẫn (đọc từ db1)
+    Route::get('/instructions', [\App\Http\Controllers\InstructionController::class, 'index'])->name('instructions.index');
+    Route::get('/instructions/{slug}', [\App\Http\Controllers\InstructionController::class, 'show'])->name('instructions.show');
+
+    // Đổi mật khẩu (buộc đổi lần đầu với tài khoản mua)
+    Route::get('/doi-mat-khau', [\App\Http\Controllers\PasswordChangeController::class, 'edit'])->name('password.change');
+    Route::post('/doi-mat-khau', [\App\Http\Controllers\PasswordChangeController::class, 'update'])->name('password.update');
+
     // Audio câu hỏi — signed trên nền auth (link copy vô dụng với người ngoài).
     Route::get('/media/questions/{question}/audio/{index?}', [\App\Http\Controllers\MediaController::class, 'questionAudio'])
         ->middleware('signed')->whereNumber('index')->name('media.question-audio');
