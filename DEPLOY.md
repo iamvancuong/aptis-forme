@@ -8,11 +8,21 @@
 - Quyền tạo database trong cPanel.
 - Tài khoản **PayOS mới** (Client ID / API Key / Checksum Key).
 
-## 1. Tạo database db2
+## ⚠️ Phân biệt 2 database — ĐỌC KỸ để không hỏng db v1
+- **db1 = `ujxmchhx_aptis_v2`** — database của **v1 đang chạy production** (kho nội dung).
+  v2 **CHỈ ĐỌC** database này. **TUYỆT ĐỐI KHÔNG** đặt tên này cho `DB_DATABASE`,
+  **KHÔNG** chạy `migrate` với nó. Đây là connection `legacy`.
+- **db2 = database MỚI** phải tự tạo (vd `ujxmchhx_aptis_forme`) — nơi v2 ghi
+  users/đơn hàng/lịch sử làm bài. Đây là `DB_DATABASE` (connection mặc định).
+
+> Nếu lỡ đặt `DB_DATABASE` = `ujxmchhx_aptis_v2` rồi chạy migrate → sẽ tạo bảng
+> đè lên database v1 đang chạy. KHÔNG được để trùng.
+
+## 1. Tạo database db2 (MỚI)
 Trong cPanel → **MySQL Databases**:
-1. Tạo database mới, ví dụ `ujxmchhx_aptis_v2`.
-2. Tạo user DB (hoặc dùng user sẵn có) và **gán quyền** cho user đó trên **cả** `db2` **và** `db1`
-   (v2 cần đọc db1). Không cấp quyền ghi lên db1 nếu muốn chắc chắn (code đã tự chặn ghi).
+1. Tạo **database mới** cho v2, ví dụ `ujxmchhx_aptis_forme` (KHÁC `ujxmchhx_aptis_v2`).
+2. **Gán quyền** cho user MySQL trên **cả 2**: db2 (đọc-ghi) **và** db1 `ujxmchhx_aptis_v2`
+   (chỉ để đọc — code đã tự chặn ghi vào db1).
 
 ## 2. Upload mã nguồn
 - Đưa toàn bộ repo v2 vào thư mục của domain mới (ví dụ `~/aptis-v2/`), document root trỏ vào `public/`.
@@ -24,21 +34,21 @@ Trong cPanel → **MySQL Databases**:
 APP_NAME="APTIS V2"
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://<domain-moi>
+APP_URL=https://nhaiaptis.com
 
-# db2 — dữ liệu v2
+# db2 — dữ liệu RIÊNG của v2 (database MỚI, KHÁC db1)
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=ujxmchhx_aptis_v2
-DB_USERNAME=<user>
+DB_DATABASE=ujxmchhx_aptis_forme
+DB_USERNAME=ujxmchhx_ujxmchhx
 DB_PASSWORD=<pass>
 
-# db1 — LEGACY (chỉ đọc), NỘI BỘ vì cùng MySQL server
+# db1 — LEGACY (CHỈ ĐỌC): db của v1 đang chạy, cùng MySQL server (host nội bộ)
 DB_LEGACY_HOST=127.0.0.1
 DB_LEGACY_PORT=3306
-DB_LEGACY_DATABASE=ujxmchhx_aptis_test_2026
-DB_LEGACY_USERNAME=<user-co-quyen-db1>
+DB_LEGACY_DATABASE=ujxmchhx_aptis_v2
+DB_LEGACY_USERNAME=ujxmchhx_ujxmchhx
 DB_LEGACY_PASSWORD=<pass>
 
 # PayOS THẬT (tài khoản mới) — TẮT giả lập
@@ -88,7 +98,7 @@ php artisan db:seed --force        # tạo admin@aptis.local — ĐỔI MẬT KH
 ## 6. Webhook PayOS
 Trong dashboard PayOS (tài khoản mới), đặt Webhook URL:
 ```
-https://<domain-moi>/webhooks/payos
+https://nhaiaptis.com/webhooks/payos
 ```
 
 ## 7. Tối ưu production
