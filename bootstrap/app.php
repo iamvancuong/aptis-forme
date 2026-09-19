@@ -24,6 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'password.changed' => \App\Http\Middleware\MustChangePassword::class,
             'session.limit' => \App\Http\Middleware\SessionLimit::class,
         ]);
+
+        // Webhook PayOS gọi từ ngoài, không có CSRF token.
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/payos',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
