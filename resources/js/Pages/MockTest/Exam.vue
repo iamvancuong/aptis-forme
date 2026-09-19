@@ -1,8 +1,12 @@
 <script setup>
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import QuestionCard from '../../components/QuestionCard.vue';
 import QuestionNav from '../../components/QuestionNav.vue';
+import { useAntiCopy } from '../../composables/antiCopy';
+
+const page = usePage();
+useAntiCopy(() => page.props.auth?.user?.role === 'admin');
 
 const props = defineProps({
     mockTest: Object,

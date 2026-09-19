@@ -93,6 +93,8 @@ Route::middleware(['auth', 'user.blocked', 'user.expired', 'session.limit', 'pas
     Route::get('/practice/{set}', [PracticeController::class, 'show'])->name('practice.show');
     Route::post('/practice/{set}/attempt', [PracticeController::class, 'store'])
         ->middleware('throttle:10,1')->name('practice.store');
+    Route::post('/practice/{set}/check', [PracticeController::class, 'check'])
+        ->middleware('throttle:120,1')->name('practice.check');
 
     // Thi thử (Mock Test) — reading/listening (writing/speaking chờ Pha 4 AI)
     Route::get('/mock-test/{skill}', [\App\Http\Controllers\MockTestController::class, 'create'])->name('mock-test.create');

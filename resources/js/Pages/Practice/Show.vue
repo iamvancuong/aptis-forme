@@ -1,8 +1,13 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import { computed, reactive, ref } from 'vue';
 import QuestionCard from '../../components/QuestionCard.vue';
 import QuestionNav from '../../components/QuestionNav.vue';
+import { useAntiCopy } from '../../composables/antiCopy';
+
+const page = usePage();
+useAntiCopy(() => page.props.auth?.user?.role === 'admin');
 
 const props = defineProps({
     set: Object,
@@ -58,6 +63,35 @@ function answered(qid) {
 
 function go(i) {
     if (i >= 0 && i < total) current.value = i;
+}
+
+// ── Kiểm tra tức thời (hiện đáp án ngay như v1) ──
+const checked = reactive({}); // qid -> {is_correct, score, answer_key}
+const checking = ref(false);
+const currentChecked = computed(() => checked[currentQuestion.value.id]);
+const isObjective = computed(() => !['writing', 'speaking'].includes(currentQuestion.value.skill));
+
+async function checkCurrent() {
+    const qid = currentQuestion.value.id;
+    if (checked[qid] || checking.value) return;
+    checking.value = true;
+    try {
+        const { data } = await axios.post(`/practice/${props.set.id}/check`, { question_id: qid, answer: answers[qid] });
+        if (data.gradable) checked[qid] = data;
+    } catch (e) {
+        // im lặng
+    } finally {
+        checking.value = false;
+    }
+}
+
+function fmtKey(k) {
+    if (!k) return '';
+    const val = k.correct_answers ?? k.correct_answer ?? k.correct_option ?? k.sentences;
+    if (val === undefined || val === null) return '';
+    if (Array.isArray(val)) return val.join(', ');
+    if (typeof val === 'object') return Object.values(val).join(', ');
+    return String(val);
 }
 
 const navItems = computed(() => props.questions.map((q) => ({
@@ -116,6 +150,29 @@ function submit() {
                     v-model:answer="answers[currentQuestion.id]"
                     @speaking-done="onSpeakingDone"
                 />
+
+                <!-- Kiểm tra tức thời + panel đáp án (như v1) -->
+                <template v-if="!isSpeaking && isObjective">
+                    <button
+                        v-if="!currentChecked"
+                        @click="checkCurrent"
+                        :disabled="checking"
+                        class="mt-4 w-full rounded-xl bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-900 disabled:opacity-60"
+                    >{{ checking ? 'Đang kiểm tra…' : 'Kiểm tra đáp án' }}</button>
+
+                    <div v-else class="mt-4 rounded-xl p-4 ring-1"
+                         :class="currentChecked.is_correct ? 'bg-emerald-50 ring-emerald-200' : 'bg-red-50 ring-red-200'">
+                        <div class="flex items-center gap-2 text-sm font-semibold"
+                             :class="currentChecked.is_correct ? 'text-emerald-700' : 'text-red-700'">
+                            <span>{{ currentChecked.is_correct ? '✓ Chính xác!' : '✗ Chưa đúng' }}</span>
+                        </div>
+                        <div v-if="fmtKey(currentChecked.answer_key)" class="mt-2 text-sm">
+                            <span class="text-slate-500">Đáp án đúng:</span>
+                            <span class="font-medium text-emerald-700">{{ fmtKey(currentChecked.answer_key) }}</span>
+                        </div>
+                        <div v-if="currentChecked.answer_key?.explanation" class="mt-2 text-sm text-slate-600" v-html="currentChecked.answer_key.explanation"></div>
+                    </div>
+                </template>
 
                 <!-- Bài Nói: chạy tự động, không có nút điều hướng -->
                 <div v-if="isSpeaking" class="mt-6 text-center text-sm text-slate-400">

@@ -1,9 +1,12 @@
 <script setup>
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { useAntiCopy } from '../composables/antiCopy';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+
+useAntiCopy(() => page.props.auth?.user?.role === 'admin');
 const flashSuccess = computed(() => page.props.flash?.success);
 const flashWarning = computed(() => page.props.flash?.warning);
 const url = computed(() => page.url);

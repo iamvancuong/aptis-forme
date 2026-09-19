@@ -35,6 +35,38 @@ class PracticeController extends Controller
         ]);
     }
 
+    /**
+     * Kiểm tra tức thời 1 câu (đọc đáp án sau khi học viên đã trả lời).
+     * Throttle để không thể "quét" cả bộ đề lấy đáp án.
+     */
+    public function check(Request $request, Set $set)
+    {
+        abort_unless($set->is_public, 404);
+
+        $data = $request->validate([
+            'question_id' => ['required', 'integer'],
+            'answer' => ['nullable'],
+        ]);
+
+        $set->load('questions');
+        $q = $set->questions->firstWhere('id', $data['question_id']);
+        abort_if(! $q, 404);
+
+        // Writing/Speaking không có đáp án đúng/sai — chấm bằng AI riêng.
+        if (in_array($q->skill, ['writing', 'speaking'])) {
+            return response()->json(['gradable' => false]);
+        }
+
+        $res = $this->grading->gradeQuestion($q, $data['answer']);
+
+        return response()->json([
+            'gradable' => true,
+            'is_correct' => $res['is_correct'],
+            'score' => $res['score'],
+            'answer_key' => $this->sanitizer->answerKeyFor($q),
+        ]);
+    }
+
     /** Nộp bài: chấm ở server (đọc đáp án từ db1), lưu attempt + answers vào db2. */
     public function store(Request $request, Set $set)
     {
