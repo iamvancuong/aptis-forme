@@ -82,13 +82,20 @@ class AiController extends Controller
             return back()->with('warning', 'Bài này đã được AI chấm.');
         }
 
-        $audioPath = is_string($answer->answer) ? $answer->answer : null;
-        if (! $audioPath) {
+        $paths = $answer->answer;
+        $paths = is_array($paths) ? $paths : (is_string($paths) ? [$paths] : []);
+        if (empty($paths)) {
             return back()->with('error', 'Không tìm thấy file ghi âm.');
         }
 
         try {
-            $transcript = $this->ai->transcribe($audioPath);
+            // Phiên âm từng đoạn (mỗi sub-câu) rồi ghép lại.
+            $parts = [];
+            foreach ($paths as $i => $p) {
+                $t = $this->ai->transcribe($p);
+                $parts[] = 'Câu ' . ($i + 1) . ': ' . $t;
+            }
+            $transcript = implode("\n", $parts);
 
             $result = $this->ai->gradeSpeaking([
                 'part' => $question->part,

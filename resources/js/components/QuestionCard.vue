@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
+import SpeakingRecorder from './SpeakingRecorder.vue';
 
 const props = defineProps({
     question: Object,
@@ -10,36 +11,6 @@ const props = defineProps({
 const answer = defineModel('answer');
 
 const meta = computed(() => props.question.metadata || {});
-
-// ── speaking: ghi âm bằng MediaRecorder ──
-const recording = ref(false);
-const audioUrl = ref(null);
-let mediaRecorder = null;
-let chunks = [];
-async function toggleRecord() {
-    if (recording.value) {
-        mediaRecorder?.stop();
-        return;
-    }
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        chunks = [];
-        mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-        mediaRecorder.onstop = () => {
-            const blob = new Blob(chunks, { type: 'audio/webm' });
-            audioUrl.value = URL.createObjectURL(blob);
-            // Đưa file vào answer để Inertia upload
-            answer.value = new File([blob], `speaking_${props.question.id}.webm`, { type: 'audio/webm' });
-            stream.getTracks().forEach((t) => t.stop());
-            recording.value = false;
-        };
-        mediaRecorder.start();
-        recording.value = true;
-    } catch (e) {
-        alert('Không truy cập được micro. Vui lòng cấp quyền và thử lại.');
-    }
-}
 
 // ── sentence_ordering: đổi thứ tự các câu (bỏ câu mở đầu cố định) ──
 const orderable = computed(() => (meta.value.sentences || []).slice(1));
@@ -182,21 +153,8 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
             <p class="text-xs text-slate-400">Bài Viết sẽ được AI chấm sau khi nộp.</p>
         </div>
 
-        <!-- SPEAKING: ghi âm, chấm AI sau khi nộp -->
-        <div v-else-if="question.skill === 'speaking'" class="mt-3">
-            <div v-if="meta.questions" class="mb-3 space-y-1 text-sm text-slate-600">
-                <div v-for="(sq, si) in meta.questions" :key="si">• {{ typeof sq === 'string' ? sq : sq.prompt }}</div>
-            </div>
-            <div class="flex items-center gap-3">
-                <button type="button" @click="toggleRecord"
-                        class="rounded-lg px-4 py-2 text-sm font-semibold text-white"
-                        :class="recording ? 'bg-red-600 hover:bg-red-700' : 'bg-brand-600 hover:bg-brand-700'">
-                    {{ recording ? '⏹ Dừng ghi' : '🎙 Bắt đầu ghi' }}
-                </button>
-                <audio v-if="audioUrl" :src="audioUrl" controls class="h-9"></audio>
-            </div>
-            <p class="mt-2 text-xs text-slate-400">Ghi âm phần trả lời của bạn. Bài Nói sẽ được AI chấm sau khi nộp.</p>
-        </div>
+        <!-- SPEAKING: tự đọc đề + beep + tự ghi âm (như v1) -->
+        <SpeakingRecorder v-else-if="question.skill === 'speaking'" :question="question" v-model:answer="answer" />
 
         <!-- fallback -->
         <div v-else class="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">

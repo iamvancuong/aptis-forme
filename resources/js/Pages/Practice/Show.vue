@@ -21,7 +21,7 @@ for (const q of props.questions) {
         else if (m.questions) answers[q.id] = m.questions.map(() => '');
         else if (m.task1 || m.task2) answers[q.id] = { task1: '', task2: '' };
         else answers[q.id] = '';
-    } else if (q.skill === 'speaking') answers[q.id] = null;
+    } else if (q.skill === 'speaking') answers[q.id] = [];
     else answers[q.id] = '';
 }
 

@@ -50,11 +50,13 @@ class PracticeController extends Controller
 
         $result = $this->grading->gradeSet($set->questions, $answers, 'practice');
 
-        // Speaking: lưu file ghi âm đã upload, thay answer bằng đường dẫn.
+        // Speaking: lưu các file ghi âm (mỗi sub-câu 1 file) → answer = mảng path.
         foreach ($result['attempt_answers'] as &$a) {
             $q = $set->questions->firstWhere('id', $a['question_id']);
             if ($q && $q->skill === 'speaking' && $request->hasFile("answers.{$q->id}")) {
-                $a['answer'] = $request->file("answers.{$q->id}")->store('speaking_attempts', 'public');
+                $files = $request->file("answers.{$q->id}");
+                $files = is_array($files) ? $files : [$files];
+                $a['answer'] = array_map(fn ($f) => $f->store('speaking_attempts', 'public'), $files);
             }
         }
         unset($a);
