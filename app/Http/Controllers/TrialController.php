@@ -50,6 +50,12 @@ class TrialController extends Controller
 
         $set->load(['quiz', 'questions']);
 
+        // Writing/Speaking: mỗi bộ là kịch bản đủ 4 part → giữ nguyên.
+        // Objective: chỉ lấy 5 câu ĐẦU của đề THẬT cho học thử gọn nhẹ.
+        $questions = in_array($skill, ['writing', 'speaking'])
+            ? $set->questions
+            : $set->questions->take(5)->values();
+
         return Inertia::render('Practice/Show', [
             'set' => [
                 'id' => $set->id,
@@ -57,7 +63,7 @@ class TrialController extends Controller
                 'skill' => $set->quiz->skill,
                 'part' => $set->quiz->part,
             ],
-            'questions' => $this->sanitizer->collectionForClient($set->questions),
+            'questions' => $this->sanitizer->collectionForClient($questions),
             'trial' => true,
         ]);
     }
@@ -90,14 +96,30 @@ class TrialController extends Controller
         ]);
     }
 
-    /** Chọn bộ đề cho học thử: ưu tiên Part 1, có câu hỏi. */
+    /**
+     * Chọn bộ đề THẬT cho học thử (db1): ưu tiên Part 1 có đủ câu; nếu không
+     * thì lấy bộ NHIỀU CÂU nhất — tránh các bộ demo mỏng (1 câu) hoặc rỗng.
+     */
     private function pickSet(string $skill): ?Set
     {
-        $pick = fn ($query) => $query->where('is_public', true)
-            ->withCount('questions')->orderBy('order')->get()
-            ->first(fn ($s) => $s->questions_count > 0);
+        $sets = Set::whereHas('quiz', fn ($q) => $q->where('skill', $skill))
+            ->where('is_public', true)
+            ->with('quiz')
+            ->withCount('questions')
+            ->get()
+            ->filter(fn ($s) => $s->questions_count > 0);
 
-        return $pick(Set::whereHas('quiz', fn ($q) => $q->where('skill', $skill)->where('part', 1)))
-            ?? $pick(Set::whereHas('quiz', fn ($q) => $q->where('skill', $skill)));
+        if ($sets->isEmpty()) {
+            return null;
+        }
+
+        $part1 = $sets->filter(fn ($s) => (int) $s->quiz->part === 1)
+            ->sortByDesc('questions_count')->first();
+
+        if ($part1 && $part1->questions_count >= 3) {
+            return $part1;
+        }
+
+        return $sets->sortByDesc('questions_count')->first();
     }
 }
