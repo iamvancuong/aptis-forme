@@ -35,6 +35,14 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
             <audio :src="question.audio_url" controls class="w-full"></audio>
         </div>
 
+        <!-- Ảnh đề (Speaking Part 2/4, Reading… — lấy từ metadata, /storage/) -->
+        <div v-if="meta.image_path" class="mt-3">
+            <img :src="`/storage/${meta.image_path}`" alt="Ảnh đề" class="mx-auto max-h-64 rounded-lg object-contain shadow-sm" />
+        </div>
+        <div v-if="meta.image_paths && meta.image_paths.length" class="mt-3 grid grid-cols-2 gap-3">
+            <img v-for="(img, ii) in meta.image_paths" :key="ii" :src="`/storage/${img}`" :alt="`Ảnh ${ii + 1}`" class="max-h-56 rounded-lg object-contain shadow-sm" />
+        </div>
+
         <!-- grammar mcq3 / choice đơn: options [{id,text}] -->
         <div v-if="question.type === 'mcq3'" class="mt-3 space-y-2">
             <label v-for="opt in meta.options" :key="opt.id"

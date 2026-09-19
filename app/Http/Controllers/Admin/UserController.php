@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attempt;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -34,6 +36,67 @@ class UserController extends Controller
             'users' => $users,
             'filters' => ['q' => $q],
         ]);
+    }
+
+    public function show(User $user)
+    {
+        $attempts = Attempt::where('user_id', $user->id)
+            ->orderByDesc('id')->limit(30)->get()
+            ->map(fn ($a) => [
+                'id' => $a->id,
+                'skill' => $a->skill,
+                'mode' => $a->mode,
+                'score' => $a->score,
+                'created_at' => $a->created_at?->format('d/m/Y H:i'),
+            ]);
+
+        $orders = Order::where('user_id', $user->id)->orWhere('email', $user->email)
+            ->orderByDesc('id')->limit(20)->get()
+            ->map(fn ($o) => [
+                'order_code' => $o->order_code,
+                'package' => $o->package,
+                'amount' => $o->amount,
+                'status' => $o->status,
+                'paid_at' => $o->paid_at?->format('d/m/Y'),
+            ]);
+
+        return Inertia::render('Admin/UserShow', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'status' => $user->status,
+                'source' => $user->source,
+                'target_level' => $user->target_level,
+                'expires_at' => $user->expires_at?->format('d/m/Y'),
+                'is_active_access' => $user->hasActiveAccess(),
+                'max_devices' => $user->max_devices,
+                'violation_count' => $user->violation_count,
+                'ai_extra_uses' => $user->ai_extra_uses,
+                'ai_remaining' => $user->getRemainingWritingAiCredits(),
+            ],
+            'attempts' => $attempts,
+            'orders' => $orders,
+        ]);
+    }
+
+    public function addAi(Request $request, User $user)
+    {
+        $data = $request->validate(['amount' => 'required|integer|min:1|max:1000']);
+        $user->increment('ai_extra_uses', $data['amount']);
+
+        return back()->with('success', "Đã thêm {$data['amount']} lượt AI cho {$user->email}.");
+    }
+
+    public function resetAi(User $user)
+    {
+        $user->update([
+            'ai_reset_version' => ($user->ai_reset_version ?? 1) + 1,
+            'ai_extra_uses' => 0,
+        ]);
+
+        return back()->with('success', "Đã reset lượt AI của {$user->email} về mặc định.");
     }
 
     public function block(User $user)

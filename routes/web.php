@@ -133,9 +133,12 @@ Route::middleware(['auth', 'user.blocked', 'admin'])
         Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
         Route::post('/users/{user}/block', [\App\Http\Controllers\Admin\UserController::class, 'block'])->name('users.block');
         Route::post('/users/{user}/unblock', [\App\Http\Controllers\Admin\UserController::class, 'unblock'])->name('users.unblock');
         Route::post('/users/{user}/extend', [\App\Http\Controllers\Admin\UserController::class, 'extend'])->name('users.extend');
+        Route::post('/users/{user}/add-ai', [\App\Http\Controllers\Admin\UserController::class, 'addAi'])->name('users.add-ai');
+        Route::post('/users/{user}/reset-ai', [\App\Http\Controllers\Admin\UserController::class, 'resetAi'])->name('users.reset-ai');
 
         Route::get('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
     });

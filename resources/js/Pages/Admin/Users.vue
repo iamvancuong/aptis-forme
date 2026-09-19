@@ -49,8 +49,10 @@ function extend(u) {
                 <tbody class="divide-y divide-slate-100">
                     <tr v-for="u in users.data" :key="u.id">
                         <td class="px-4 py-3">
-                            <div class="font-medium text-slate-900">{{ u.name }}</div>
-                            <div class="text-slate-500">{{ u.email }}</div>
+                            <Link :href="`/admin/users/${u.id}`" class="block hover:text-brand-700">
+                                <div class="font-medium text-slate-900">{{ u.name }}</div>
+                                <div class="text-slate-500">{{ u.email }}</div>
+                            </Link>
                         </td>
                         <td class="px-4 py-3 text-slate-600">{{ u.source }}</td>
                         <td class="px-4 py-3">
