@@ -1,9 +1,18 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
 
 const props = defineProps({ attempt: Object, items: Array });
+
+const grading = ref(null);
+function gradeAI(answerId) {
+    grading.value = answerId;
+    router.post(`/ai/grade-writing/${answerId}`, {}, {
+        preserveScroll: true,
+        onFinish: () => (grading.value = null),
+    });
+}
 
 const onlyWrong = ref(false);
 const correctCount = computed(() => props.items.filter((i) => i.is_correct === true).length);
@@ -55,10 +64,44 @@ function fmtKey(k) {
                     <span v-else class="flex-shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Chờ chấm</span>
                 </div>
                 <dl class="mt-3 space-y-1 text-sm">
-                    <div class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Bạn trả lời:</dt><dd class="text-slate-800">{{ fmtAnswer(it.your_answer) }}</dd></div>
+                    <div class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Bạn trả lời:</dt><dd class="whitespace-pre-wrap text-slate-800">{{ fmtAnswer(it.your_answer) }}</dd></div>
                     <div v-if="fmtKey(it.answer_key)" class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Đáp án:</dt><dd class="font-medium text-emerald-700">{{ fmtKey(it.answer_key) }}</dd></div>
                     <div v-if="it.answer_key?.explanation" class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Giải thích:</dt><dd class="text-slate-600" v-html="it.answer_key.explanation"></dd></div>
                 </dl>
+
+                <!-- Chấm AI Writing -->
+                <template v-if="it.skill === 'writing'">
+                    <button
+                        v-if="!it.ai"
+                        @click="gradeAI(it.answer_id)"
+                        :disabled="grading === it.answer_id"
+                        class="mt-3 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
+                    >{{ grading === it.answer_id ? 'AI đang chấm…' : '🤖 Chấm bằng AI' }}</button>
+
+                    <div v-else class="mt-4 rounded-xl bg-brand-50 p-4 ring-1 ring-brand-200">
+                        <div class="flex flex-wrap gap-3 text-xs">
+                            <span v-for="(v, k) in it.ai.scores" :key="k" class="rounded-full bg-white px-2.5 py-1 font-medium text-slate-700 ring-1 ring-slate-200">
+                                {{ k }}: <b class="text-brand-700">{{ v }}/5</b>
+                            </span>
+                        </div>
+                        <dl class="mt-3 space-y-1 text-sm">
+                            <div v-for="(v, k) in it.ai.feedback" :key="k"><dt class="inline font-medium text-slate-600">{{ k }}:</dt> <dd class="inline text-slate-700">{{ v }}</dd></div>
+                        </dl>
+                        <div v-for="(pr, pi) in it.ai.part_responses" :key="pi" class="mt-3 rounded-lg bg-white p-3 ring-1 ring-slate-200">
+                            <div class="text-xs font-semibold text-slate-500">{{ pr.label }}</div>
+                            <p class="mt-1 text-sm text-emerald-700"><b>Gợi ý:</b> {{ pr.improved_sample }}</p>
+                            <div v-for="(c, ci) in pr.detailed_corrections" :key="ci" class="mt-1 text-xs text-slate-600">
+                                <span class="text-red-600 line-through">{{ c.original }}</span> → <span class="text-emerald-700">{{ c.corrected }}</span> — {{ c.explanation }}
+                            </div>
+                        </div>
+                        <div v-if="it.ai.suggestions?.length" class="mt-3 text-sm text-slate-700">
+                            <b>Nên cải thiện:</b>
+                            <ul class="mt-1 list-disc pl-5">
+                                <li v-for="(s, si) in it.ai.suggestions" :key="si">{{ s }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </template>
             </div>
             <div v-if="shown.length === 0" class="rounded-2xl bg-white p-8 text-center text-slate-400 ring-1 ring-slate-200">
                 Không có câu nào để hiển thị. 🎉

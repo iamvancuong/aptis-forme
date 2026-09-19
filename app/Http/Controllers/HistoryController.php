@@ -44,12 +44,15 @@ class HistoryController extends Controller
             $q = $questions->get($ans->question_id);
 
             return [
+                'answer_id' => $ans->id,
+                'skill' => $q?->skill,
                 'question' => $q ? $this->sanitizer->questionForClient($q) : null,
                 'answer_key' => $q ? $this->sanitizer->answerKeyFor($q) : [],
                 'your_answer' => $ans->answer,
                 'is_correct' => $ans->is_correct,
                 'score' => $ans->score,
                 'grading_status' => $ans->grading_status,
+                'ai' => $ans->ai_metadata['feedback'] ?? null,
             ];
         })->values();
 

@@ -93,4 +93,39 @@ class User extends Authenticatable
     {
         return $this->hasMany(LoginSession::class);
     }
+
+    public function writingAiUsages(): HasMany
+    {
+        return $this->hasMany(WritingAiUsage::class);
+    }
+
+    // ── Lượt chấm AI Writing ────────────────────────────────────────────
+    /** Số lượt chấm AI Writing còn lại ('unlimited' cho admin). */
+    public function getRemainingWritingAiCredits(): int|string
+    {
+        if ($this->isAdmin()) {
+            return 'unlimited';
+        }
+
+        $used = $this->writingAiUsages()
+            ->where('reset_version', $this->ai_reset_version ?? 1)
+            ->sum('usage_count');
+
+        $limit = config('services.openai.writing_limit', 10) + ($this->ai_extra_uses ?? 0);
+
+        return max(0, $limit - (int) $used);
+    }
+
+    /** Ghi nhận đã dùng 1 lượt chấm AI cho part writing. */
+    public function recordWritingAiUsage(int $part): void
+    {
+        if ($this->isAdmin()) {
+            return;
+        }
+
+        $this->writingAiUsages()->firstOrCreate([
+            'writing_part' => $part,
+            'reset_version' => $this->ai_reset_version ?? 1,
+        ])->increment('usage_count');
+    }
 }

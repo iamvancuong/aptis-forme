@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    // OpenAI — chấm AI Writing/Speaking (Pha 4).
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'transcribe_model' => env('OPENAI_TRANSCRIBE_MODEL', 'whisper-1'),
+        // Hạn mức lượt chấm AI mặc định mỗi part cho học viên thường.
+        'writing_limit' => (int) env('AI_WRITING_LIMIT', 10),
+        'speaking_limit' => (int) env('AI_SPEAKING_LIMIT', 10),
+    ],
+
 ];

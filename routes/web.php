@@ -104,6 +104,10 @@ Route::middleware(['auth', 'user.blocked', 'user.expired', 'session.limit', 'pas
     // Bảng xếp hạng
     Route::get('/leaderboard', [\App\Http\Controllers\LeaderboardController::class, 'index'])->name('leaderboard.index');
 
+    // Chấm AI Writing
+    Route::post('/ai/grade-writing/{answer}', [\App\Http\Controllers\AiController::class, 'gradeWriting'])
+        ->middleware('throttle:20,1')->name('ai.grade-writing');
+
     // Lịch sử làm bài
     Route::get('/history', [\App\Http\Controllers\HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{attempt}', [\App\Http\Controllers\HistoryController::class, 'show'])->name('history.show');

@@ -16,7 +16,12 @@ for (const q of props.questions) {
     if (q.type === 'fill_in_blanks_mc') answers[q.id] = (m.paragraphs || []).map(() => null);
     else if (q.type === 'sentence_ordering') answers[q.id] = (m.sentences || []).slice(1);
     else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)) answers[q.id] = {};
-    else if (['writing', 'speaking'].includes(q.skill)) answers[q.id] = null;
+    else if (q.skill === 'writing') {
+        if (m.fields) answers[q.id] = m.fields.map(() => '');
+        else if (m.questions) answers[q.id] = m.questions.map(() => '');
+        else if (m.task1 || m.task2) answers[q.id] = { task1: '', task2: '' };
+        else answers[q.id] = '';
+    } else if (q.skill === 'speaking') answers[q.id] = null;
     else answers[q.id] = '';
 }
 
