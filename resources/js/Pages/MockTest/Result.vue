@@ -34,7 +34,7 @@ const mins = props.mockTest.duration_seconds ? Math.round(props.mockTest.duratio
                             <span class="font-medium">{{ Math.round(sc) }}%</span>
                         </div>
                         <div class="mt-1 h-2 rounded-full bg-slate-100">
-                            <div class="h-2 rounded-full bg-indigo-500" :style="{ width: sc + '%' }"></div>
+                            <div class="h-2 rounded-full bg-brand-500" :style="{ width: sc + '%' }"></div>
                         </div>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ const mins = props.mockTest.duration_seconds ? Math.round(props.mockTest.duratio
 
             <div class="mt-6 flex gap-3">
                 <Link href="/dashboard" class="flex-1 rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold ring-1 ring-slate-200">Trang chủ</Link>
-                <Link :href="`/mock-test/${mockTest.skill}`" class="flex-1 rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-700">Thi lại</Link>
+                <Link :href="`/mock-test/${mockTest.skill}`" class="flex-1 rounded-xl bg-brand-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-brand-700">Thi lại</Link>
             </div>
         </main>
     </div>

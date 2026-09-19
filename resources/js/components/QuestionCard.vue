@@ -36,8 +36,8 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
         <div v-if="question.type === 'mcq3'" class="mt-3 space-y-2">
             <label v-for="opt in meta.options" :key="opt.id"
                    class="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm cursor-pointer"
-                   :class="answer === opt.id ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200'">
-                <input type="radio" :value="opt.id" v-model="answer" class="text-indigo-600">
+                   :class="answer === opt.id ? 'border-brand-500 bg-brand-50' : 'border-slate-200'">
+                <input type="radio" :value="opt.id" v-model="answer" class="text-brand-600">
                 <span><b>{{ opt.id }}.</b> {{ opt.text }}</span>
             </label>
         </div>
@@ -48,8 +48,8 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
             <div class="space-y-2">
                 <label v-for="(c, i) in meta.choices" :key="i"
                        class="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm cursor-pointer"
-                       :class="answer === String(i) ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200'">
-                    <input type="radio" :value="String(i)" v-model="answer" class="text-indigo-600">
+                       :class="answer === String(i) ? 'border-brand-500 bg-brand-50' : 'border-slate-200'">
+                    <input type="radio" :value="String(i)" v-model="answer" class="text-brand-600">
                     <span>{{ c }}</span>
                 </label>
             </div>
@@ -109,7 +109,7 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
         </div>
 
         <!-- writing / speaking: Pha 4 (AI) -->
-        <div v-else-if="['writing','speaking'].includes(question.skill)" class="mt-3 rounded-lg bg-indigo-50 px-3 py-2 text-xs text-indigo-700">
+        <div v-else-if="['writing','speaking'].includes(question.skill)" class="mt-3 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-700">
             Phần {{ question.skill }} sẽ được chấm bằng AI (đang phát triển ở pha sau).
         </div>
 

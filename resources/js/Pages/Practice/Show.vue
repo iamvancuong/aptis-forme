@@ -42,7 +42,7 @@ function submit() {
         <header class="bg-white ring-1 ring-slate-200">
             <div class="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between">
                 <a href="/dashboard" class="text-sm text-slate-500 hover:text-slate-800">← Trang chủ</a>
-                <div class="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                <div class="text-xs font-semibold uppercase tracking-wide text-brand-600">
                     {{ set.skill }} · Part {{ set.part }}
                 </div>
             </div>
@@ -63,7 +63,7 @@ function submit() {
                 <button
                     type="submit"
                     :disabled="form.processing"
-                    class="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+                    class="w-full rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
                 >
                     {{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}
                 </button>

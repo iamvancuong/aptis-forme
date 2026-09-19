@@ -25,7 +25,7 @@ function fmtKey(k) {
         <header class="bg-white ring-1 ring-slate-200">
             <div class="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between">
                 <a href="/history" class="text-sm text-slate-500 hover:text-slate-800">← Lịch sử</a>
-                <span class="text-xs font-semibold uppercase tracking-wide text-indigo-600">{{ attempt.skill }}</span>
+                <span class="text-xs font-semibold uppercase tracking-wide text-brand-600">{{ attempt.skill }}</span>
             </div>
         </header>
 

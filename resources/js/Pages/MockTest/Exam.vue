@@ -59,7 +59,7 @@ function submit() {
                 <span class="text-sm font-semibold text-slate-900">Thi thử · {{ mockTest.skill }}</span>
                 <div class="flex items-center gap-4">
                     <span class="rounded-lg bg-slate-900 px-3 py-1 font-mono text-sm text-white" :class="remaining < 60 && 'bg-red-600'">⏱ {{ mmss }}</span>
-                    <button @click="submit" :disabled="submitting" class="rounded-lg bg-indigo-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60">Nộp bài</button>
+                    <button @click="submit" :disabled="submitting" class="rounded-lg bg-brand-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60">Nộp bài</button>
                 </div>
             </div>
         </header>
@@ -68,7 +68,7 @@ function submit() {
             <div class="flex flex-wrap gap-2">
                 <button v-for="s in sections" :key="s.index" @click="current = s.index"
                         class="rounded-lg px-3 py-1.5 text-sm"
-                        :class="current === s.index ? 'bg-indigo-600 text-white' : 'bg-white ring-1 ring-slate-200 text-slate-600'">
+                        :class="current === s.index ? 'bg-brand-600 text-white' : 'bg-white ring-1 ring-slate-200 text-slate-600'">
                     Part {{ s.part }}
                 </button>
             </div>
@@ -87,7 +87,7 @@ function submit() {
                     <button v-if="s.index > 0" @click="current--" class="rounded-lg bg-white px-4 py-2 text-sm ring-1 ring-slate-200">← Part trước</button>
                     <span></span>
                     <button v-if="s.index < sections.length - 1" @click="current++" class="rounded-lg bg-white px-4 py-2 text-sm ring-1 ring-slate-200">Part sau →</button>
-                    <button v-else @click="submit" :disabled="submitting" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Nộp bài</button>
+                    <button v-else @click="submit" :disabled="submitting" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Nộp bài</button>
                 </div>
             </div>
         </main>

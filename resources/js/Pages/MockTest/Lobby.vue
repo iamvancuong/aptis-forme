@@ -50,7 +50,7 @@ function start() {
                     v-else
                     @click="start"
                     :disabled="!canStart || form.processing"
-                    class="mt-6 w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+                    class="mt-6 w-full rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
                 >
                     {{ form.processing ? 'Đang tạo đề…' : 'Bắt đầu thi' }}
                 </button>
