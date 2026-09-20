@@ -1,7 +1,8 @@
 @extends('layouts.marketing')
 
-@section('title', config('app.name') . ' — Luyện thi APTIS online')
-@section('meta_description', 'Luyện thi APTIS đạt điểm cao: học thử miễn phí, thi thử full đề, AI chấm Writing & Speaking. Giá ưu đãi.')
+@section('title', 'Luyện thi APTIS online - Thi thử & AI chấm | nhaiaptis')
+@section('meta_description', 'Luyện thi APTIS online cùng nhaiaptis: học thử miễn phí, thi thử full đề có tính giờ, AI chấm Writing & Speaking theo tiêu chí APTIS. Ngân hàng đề phong phú, giá ưu đãi.')
+@section('canonical', url('/'))
 
 @push('jsonld')
 @php

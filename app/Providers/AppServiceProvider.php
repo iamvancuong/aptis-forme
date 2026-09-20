@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Brand cố định = nhaiaptis cho MỌI nơi (title SEO, email…) — không lệ thuộc APP_NAME/.env.
+        config(['app.name' => 'nhaiaptis']);
     }
 }
