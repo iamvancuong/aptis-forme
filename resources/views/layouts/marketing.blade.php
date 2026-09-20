@@ -75,14 +75,22 @@
     </main>
 
     <footer class="mt-16 border-t border-slate-200 bg-white">
-        <div class="mx-auto max-w-5xl px-6 py-8 text-sm text-slate-500 flex flex-wrap gap-4 justify-between">
-            <span>© {{ date('Y') }} nhaiaptis</span>
-            <nav class="flex flex-wrap gap-4">
-                <a href="{{ route('about') }}" class="hover:text-slate-800">Giới thiệu</a>
-                <a href="{{ route('aptis') }}" class="hover:text-slate-800">Luyện thi APTIS</a>
-                <a href="{{ route('catalog') }}" class="hover:text-slate-800">Ngân hàng đề</a>
-                <a href="{{ route('policy.refund') }}" class="hover:text-slate-800">Chính sách hoàn tiền</a>
-            </nav>
+        <div class="mx-auto max-w-5xl px-6 py-8 text-sm text-slate-500">
+            <div class="flex flex-wrap justify-between gap-4">
+                <span>© {{ date('Y') }} nhaiaptis</span>
+                <nav class="flex flex-wrap gap-4">
+                    <a href="{{ route('about') }}" class="hover:text-slate-800">Giới thiệu</a>
+                    <a href="{{ route('aptis') }}" class="hover:text-slate-800">Luyện thi APTIS</a>
+                    <a href="{{ route('catalog') }}" class="hover:text-slate-800">Ngân hàng đề</a>
+                    <a href="{{ route('policy.refund') }}" class="hover:text-slate-800">Chính sách hoàn tiền</a>
+                </nav>
+            </div>
+            <p class="mt-4 text-xs leading-relaxed text-slate-400">
+                Học liệu được tổng hợp, chọn lọc và sắp xếp từ nhiều nguồn công khai phục vụ mục đích học tập.
+                nhaiaptis là nền tảng ôn luyện độc lập, không phải đơn vị tổ chức thi và không liên kết chính thức với British Council.
+                “APTIS” thuộc về British Council. Nội dung là đề luyện tập mô phỏng.
+                <a href="{{ route('about') }}" class="underline hover:text-slate-600">Xem chi tiết</a>.
+            </p>
         </div>
     </footer>
 </body>
