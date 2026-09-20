@@ -26,27 +26,30 @@ function logout() {
 <template>
     <div class="min-h-screen bg-slate-50">
         <header class="bg-slate-900 text-white">
-            <div class="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-6">
-                    <span class="flex items-center gap-2 font-bold">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6">
+                <!-- Hàng 1: logo + hành động -->
+                <div class="flex items-center justify-between gap-3 py-3">
+                    <span class="flex shrink-0 items-center gap-2 font-bold whitespace-nowrap">
                         <BrandLogo :size="26" />
-                        nhaiaptis · Admin
+                        <span class="hidden sm:inline">nhaiaptis · Admin</span>
+                        <span class="sm:hidden">Admin</span>
                     </span>
-                    <nav class="flex gap-1 text-sm">
-                        <Link
-                            v-for="n in nav"
-                            :key="n.href"
-                            :href="n.href"
-                            class="rounded-md px-3 py-1.5"
-                            :class="isActive(n.href) ? 'bg-white/15 text-white' : 'text-slate-300 hover:text-white'"
-                        >{{ n.label }}</Link>
-                    </nav>
+                    <div class="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm">
+                        <a href="/dashboard" class="text-slate-300 hover:text-white">Trang học viên</a>
+                        <Link href="/doi-mat-khau" class="text-slate-300 hover:text-white">Đổi mật khẩu</Link>
+                        <button @click="logout" class="text-slate-300 hover:text-white">Đăng xuất</button>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="/dashboard" class="text-sm text-slate-300 hover:text-white">Trang học viên</a>
-                    <Link href="/doi-mat-khau" class="text-sm text-slate-300 hover:text-white">Đổi mật khẩu</Link>
-                    <button @click="logout" class="text-sm text-slate-300 hover:text-white">Đăng xuất</button>
-                </div>
+                <!-- Hàng 2: menu (cuộn ngang trên mobile) -->
+                <nav class="-mx-1 flex gap-1 overflow-x-auto pb-2 text-sm">
+                    <Link
+                        v-for="n in nav"
+                        :key="n.href"
+                        :href="n.href"
+                        class="shrink-0 whitespace-nowrap rounded-md px-3 py-1.5"
+                        :class="isActive(n.href) ? 'bg-white/15 text-white' : 'text-slate-300 hover:text-white'"
+                    >{{ n.label }}</Link>
+                </nav>
             </div>
         </header>
 
