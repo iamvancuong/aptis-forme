@@ -40,7 +40,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            // Media dùng chung với v1: đặt MEDIA_ROOT trong .env trỏ tới storage v1
+            // (reset-proof, không phụ thuộc symlink dễ bị git reset --hard xoá).
+            'root' => env('MEDIA_ROOT', storage_path('app/public')),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
