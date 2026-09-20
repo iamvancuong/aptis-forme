@@ -14,7 +14,7 @@ return [
         'week' => [
             'label'          => 'Gói 2 Tuần',
             'unit'           => 'gói',
-            'price'          => 250000,   // giá bán
+            'price'          => 150000,   // giá bán
             'original_price' => 499000,   // giá gạch ngang (giảm ~50%)
             'days'           => 14,
             'min'            => 1,
@@ -24,7 +24,7 @@ return [
         'month' => [
             'label'          => 'Gói 1 Tháng',
             'unit'           => 'gói',
-            'price'          => 400000,   // giá bán
+            'price'          => 250000,   // giá bán
             'original_price' => 799000,   // giá gạch ngang (giảm ~50%)
             'days'           => 30,
             'min'            => 1,
