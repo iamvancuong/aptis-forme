@@ -115,7 +115,7 @@ function submit() {
 <template>
     <Head :title="`Làm bài — ${set.title}`" />
 
-    <div class="min-h-screen bg-slate-50">
+    <div class="flex min-h-screen flex-col bg-slate-50">
         <header class="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur">
             <div class="mx-auto max-w-2xl px-6 py-3">
                 <div class="flex items-center justify-between">
@@ -129,7 +129,7 @@ function submit() {
             </div>
         </header>
 
-        <main class="mx-auto max-w-2xl px-6 py-8">
+        <main class="mx-auto w-full max-w-2xl flex-1 px-6 py-8">
             <!-- Banner học thử -->
             <div v-if="trial" class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-brand-600 to-violet-600 px-5 py-3 text-white">
                 <span class="text-sm font-medium">🎓 Bạn đang học thử miễn phí kỹ năng này.</span>
