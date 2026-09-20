@@ -101,9 +101,30 @@ class PaymentController extends Controller
         ]);
     }
 
-    /** Kiểm tra trạng thái đơn (JS poll để tự chuyển khi đã thanh toán). */
+    /**
+     * Kiểm tra trạng thái đơn (JS poll). TỰ hỏi PayOS nếu đơn còn pending →
+     * nếu đã trả thì fulfill ngay (tạo tài khoản + gửi mail) — không lệ thuộc webhook.
+     */
     public function status(Order $order)
     {
+        if (! $order->isPaid()
+            && $order->payos_link_id
+            && ! config('payos.fake')
+            && $this->payos->isConfigured()) {
+            try {
+                $info = $this->payos->getPaymentInfo($order->order_code);
+                $paid = ($info['status'] ?? '') === 'PAID'
+                    || (int) ($info['amountPaid'] ?? 0) >= (int) $order->amount;
+
+                if ($paid) {
+                    $this->fulfillment->fulfill($order); // idempotent: an toàn nếu webhook cũng chạy
+                    $order->refresh();
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Poll PayOS status failed', ['order' => $order->id, 'error' => $e->getMessage()]);
+            }
+        }
+
         return response()->json([
             'paid' => $order->isPaid(),
             'status' => $order->status,
