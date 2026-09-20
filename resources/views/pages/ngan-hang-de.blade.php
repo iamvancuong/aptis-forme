@@ -1,7 +1,7 @@
 @extends('layouts.marketing')
 
-@section('title', 'Ngân hàng đề APTIS — ' . config('app.name'))
-@section('meta_description', 'Toàn bộ ngân hàng đề luyện thi APTIS: đủ 4 kỹ năng Reading, Listening, Writing, Speaking, cập nhật liên tục.')
+@section('title', 'Ngân hàng đề APTIS - Kho đề luyện thi đầy đủ | nhaiaptis')
+@section('meta_description', 'Ngân hàng đề APTIS đầy đủ 4 kỹ năng Reading, Listening, Writing, Speaking, cập nhật liên tục. Xem toàn bộ đề và học thử miễn phí tại nhaiaptis.')
 
 @php
     // [emoji, tên EN, tên VN, class nền header, class nền nút] — dùng class ĐẦY ĐỦ để Tailwind biên dịch.

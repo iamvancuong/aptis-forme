@@ -1,7 +1,7 @@
 @extends('layouts.marketing')
 
-@section('title', 'Luyện thi APTIS online — ' . config('app.name'))
-@section('meta_description', 'Luyện thi APTIS đủ 4 kỹ năng: Reading, Listening, Writing, Speaking. Thi thử chấm điểm, luyện tập theo part.')
+@section('title', 'Luyện thi APTIS 4 kỹ năng: Reading, Listening, Writing, Speaking | nhaiaptis')
+@section('meta_description', 'Luyện thi APTIS đủ 4 kỹ năng Reading, Listening, Writing, Speaking: luyện theo part, thi thử chấm điểm và AI chấm bài Viết/Nói. Học thử miễn phí tại nhaiaptis.')
 
 @section('content')
 <section class="mx-auto max-w-3xl px-6 py-12">

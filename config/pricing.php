@@ -2,7 +2,7 @@
 
 /*
 |--------------------------------------------------------------------------
-| Bảng giá APTIS V2 — nguồn sự thật duy nhất
+| Bảng giá nhaiaptis — nguồn sự thật duy nhất
 |--------------------------------------------------------------------------
 | Trang bán, flow đăng ký và bảng đơn đều đọc từ đây. Sửa giá 1 chỗ (file này).
 | `original_price` = giá gạch ngang (định vị "giảm giá"). Thành tiền = price × quantity.

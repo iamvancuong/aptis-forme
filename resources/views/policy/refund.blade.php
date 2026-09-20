@@ -1,6 +1,7 @@
 @extends('layouts.marketing')
 
-@section('title', 'Chính sách hoàn tiền — ' . config('app.name'))
+@section('title', 'Chính sách hoàn tiền | nhaiaptis')
+@section('meta_description', 'Chính sách hoàn tiền của nhaiaptis — nền tảng luyện thi APTIS online. Liên hệ hỗ trợ để được giải đáp về hoàn/hủy đơn.')
 
 @section('content')
 <section class="mx-auto max-w-3xl px-6 py-12 prose prose-slate">

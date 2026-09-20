@@ -7,6 +7,9 @@
     <meta name="description" content="@yield('meta_description', 'Luyện thi APTIS online: học thử miễn phí, thi thử full đề có tính giờ, AI chấm Writing & Speaking theo tiêu chí APTIS.')">
     <link rel="canonical" href="@yield('canonical', url()->current())">
     <meta name="robots" content="index, follow">
+    @if (config('services.google.site_verification'))
+        <meta name="google-site-verification" content="{{ config('services.google.site_verification') }}">
+    @endif
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
     {{-- Open Graph (Facebook, Zalo…) --}}

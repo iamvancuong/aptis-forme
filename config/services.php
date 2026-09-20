@@ -45,4 +45,9 @@ return [
         'speaking_limit' => (int) env('AI_SPEAKING_LIMIT', 10),
     ],
 
+    // Google — mã xác minh Search Console (dán mã từ Google vào .env).
+    'google' => [
+        'site_verification' => env('GOOGLE_SITE_VERIFICATION'),
+    ],
+
 ];

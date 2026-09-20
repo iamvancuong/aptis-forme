@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@aptis.local'],
             [
-                'name' => 'Admin V2',
+                'name' => 'Quản trị nhaiaptis',
                 'password' => 'admin1234',
                 'role' => 'admin',
                 'source' => 'seed',
