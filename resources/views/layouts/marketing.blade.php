@@ -26,17 +26,18 @@
     <meta name="twitter:description" content="@yield('meta_description', 'Luyện thi APTIS online: học thử miễn phí, thi thử full đề, AI chấm Writing & Speaking.')">
     <meta name="twitter:image" content="@yield('og_image', url('og-image.svg'))">
 
-    {{-- Dữ liệu có cấu trúc: Tổ chức + Website --}}
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "nhaiaptis",
-        "url": "{{ url('/') }}",
-        "logo": "{{ url('favicon.svg') }}",
-        "description": "Nền tảng luyện thi APTIS trực tuyến: luyện tập theo kỹ năng, thi thử full đề và AI chấm Writing & Speaking."
-    }
-    </script>
+    {{-- Dữ liệu có cấu trúc: Tổ chức (dựng bằng json_encode để Blade không hiểu nhầm "@context") --}}
+    @php
+        $orgLd = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'nhaiaptis',
+            'url' => url('/'),
+            'logo' => url('favicon.svg'),
+            'description' => 'Nền tảng luyện thi APTIS trực tuyến: luyện tập theo kỹ năng, thi thử full đề và AI chấm Writing & Speaking.',
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($orgLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
     @stack('jsonld')
 
     @vite(['resources/css/app.css'])
