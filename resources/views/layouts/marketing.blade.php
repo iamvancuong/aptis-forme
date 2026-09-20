@@ -19,7 +19,7 @@
     <meta property="og:url" content="@yield('canonical', url()->current())">
     <meta property="og:title" content="@yield('title', config('app.name') . ' — Luyện thi APTIS online')">
     <meta property="og:description" content="@yield('meta_description', 'Luyện thi APTIS online: học thử miễn phí, thi thử full đề, AI chấm Writing & Speaking.')">
-    <meta property="og:image" content="@yield('og_image', url('og-image.svg'))">
+    <meta property="og:image" content="@yield('og_image', url('images/og-image.png'))">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
 
@@ -27,7 +27,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', config('app.name') . ' — Luyện thi APTIS online')">
     <meta name="twitter:description" content="@yield('meta_description', 'Luyện thi APTIS online: học thử miễn phí, thi thử full đề, AI chấm Writing & Speaking.')">
-    <meta name="twitter:image" content="@yield('og_image', url('og-image.svg'))">
+    <meta name="twitter:image" content="@yield('og_image', url('images/og-image.png'))">
 
     {{-- Dữ liệu có cấu trúc: Tổ chức (dựng bằng json_encode để Blade không hiểu nhầm "@context") --}}
     @php
