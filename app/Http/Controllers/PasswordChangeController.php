@@ -9,15 +9,21 @@ use Inertia\Inertia;
 
 class PasswordChangeController extends Controller
 {
-    public function edit()
+    public function edit(Request $request)
     {
-        return Inertia::render('Auth/ChangePassword');
+        return Inertia::render('Auth/ChangePassword', [
+            'forced' => (bool) $request->user()->must_change_password,
+        ]);
     }
 
     public function update(Request $request)
     {
+        $forced = (bool) $request->user()->must_change_password;
+
         $data = $request->validate([
-            'password' => ['required', 'confirmed', Password::min(8)],
+            // Tự đổi (không bị ép) phải nhập mật khẩu hiện tại để bảo mật.
+            'current_password' => [$forced ? 'nullable' : 'required', 'current_password'],
+            'password' => ['required', 'confirmed', Password::min(8), 'different:current_password'],
         ]);
 
         $request->user()->update([
