@@ -26,7 +26,8 @@ class ReconcilePayos extends Command
             return self::SUCCESS;
         }
 
-        $query = Order::where('status', Order::STATUS_PENDING);
+        $query = Order::where('status', Order::STATUS_PENDING)
+            ->whereNotNull('payos_link_id'); // bỏ qua đơn chưa từng tạo link (fake/chưa bắt đầu)
 
         if ($code = $this->option('order')) {
             $query->where('order_code', $code);
