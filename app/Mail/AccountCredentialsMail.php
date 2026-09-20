@@ -26,19 +26,17 @@ class AccountCredentialsMail extends Mailable
 
     public function envelope(): Envelope
     {
-        $app = config('app.name');
-
         return new Envelope(
             subject: $this->isNew
-                ? "Tài khoản {$app} của bạn đã sẵn sàng"
-                : "{$app} — tài khoản đã được gia hạn",
+                ? 'Tài khoản nhaiaptis của bạn đã sẵn sàng'
+                : 'nhaiaptis — tài khoản đã được gia hạn',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.account-credentials',
+            view: 'mail.account-credentials',
             with: [
                 'email' => $this->email,
                 'password' => $this->password,
