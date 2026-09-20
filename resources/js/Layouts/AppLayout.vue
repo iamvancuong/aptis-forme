@@ -65,15 +65,15 @@ function logout() {
                         </div>
                         <a v-if="user?.role === 'admin'" href="/admin"
                            class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                            <span>🛠️</span> Trang quản trị
+                            Trang quản trị
                         </a>
                         <Link href="/doi-mat-khau" @click="menuOpen = false"
                               class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                            <span>🔑</span> Đổi mật khẩu
+                            Đổi mật khẩu
                         </Link>
                         <button @click="logout"
                                 class="flex w-full items-center gap-2 border-t border-slate-100 px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50">
-                            <span>↩</span> Đăng xuất
+                            Đăng xuất
                         </button>
                     </div>
                 </div>
