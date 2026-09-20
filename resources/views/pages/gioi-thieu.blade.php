@@ -20,7 +20,10 @@
         <div class="prose prose-slate mt-3 max-w-none text-sm text-slate-600">
             <p>Học liệu trên {{ config('app.name') }} được <b>biên soạn, tổng hợp, chọn lọc và sắp xếp lại từ nhiều nguồn tài liệu luyện thi công khai</b> cùng kinh nghiệm giảng dạy, nhằm phục vụ mục đích <b>học tập và ôn luyện</b>. Chúng tôi đầu tư công sức hệ thống hoá, chuẩn hoá định dạng và bổ sung phần chấm điểm/nhận xét để tạo nên trải nghiệm luyện thi riêng của nền tảng.</p>
             <p>“APTIS” là kỳ thi và thương hiệu thuộc về <b>British Council</b>. {{ config('app.name') }} là nền tảng ôn luyện <b>độc lập</b>, <b>không phải là đơn vị tổ chức thi</b> và <b>không đại diện, không liên kết chính thức</b> với British Council hay bất kỳ tổ chức nào. Đề trên nền tảng là <b>đề luyện tập mô phỏng</b>, không phải đề thi thật.</p>
-            <p>Mọi nhãn hiệu, tên gọi, hình ảnh (nếu có) thuộc quyền của chủ sở hữu tương ứng. Nếu bạn là chủ sở hữu nội dung và cho rằng có nội dung chưa phù hợp về bản quyền, vui lòng liên hệ để chúng tôi <b>rà soát và gỡ bỏ trong thời gian sớm nhất</b>.</p>
+            <p>Mọi nhãn hiệu, tên gọi, hình ảnh (nếu có) thuộc quyền của chủ sở hữu tương ứng. Nếu bạn là chủ sở hữu nội dung và cho rằng có nội dung chưa phù hợp về bản quyền, vui lòng liên hệ <a href="mailto:nhaiaptis@gmail.com" class="font-semibold text-brand-600">nhaiaptis@gmail.com</a> để chúng tôi <b>rà soát và gỡ bỏ trong thời gian sớm nhất</b>.</p>
+        </div>
+        <div class="mt-4 text-sm text-slate-600">
+            📧 Liên hệ / hỗ trợ: <a href="mailto:nhaiaptis@gmail.com" class="font-semibold text-brand-600 hover:underline">nhaiaptis@gmail.com</a>
         </div>
     </div>
 

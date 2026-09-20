@@ -10,5 +10,11 @@
         Nội dung chính sách hoàn tiền sẽ được cập nhật. Vui lòng liên hệ bộ phận hỗ trợ để được giải đáp
         về việc hoàn/hủy đơn.
     </p>
+    <div class="mt-6 rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200">
+        <h2 class="text-base font-bold text-slate-900">Liên hệ hỗ trợ</h2>
+        <p class="mt-1 text-slate-600">
+            Email: <a href="mailto:nhaiaptis@gmail.com" class="font-semibold text-brand-600 hover:underline">nhaiaptis@gmail.com</a>
+        </p>
+    </div>
 </section>
 @endsection

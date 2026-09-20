@@ -37,7 +37,13 @@
             'name' => 'nhaiaptis',
             'url' => url('/'),
             'logo' => url('favicon.svg'),
+            'email' => 'nhaiaptis@gmail.com',
             'description' => 'Nền tảng luyện thi APTIS trực tuyến: luyện tập theo kỹ năng, thi thử full đề và AI chấm Writing & Speaking.',
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'contactType' => 'customer support',
+                'email' => 'nhaiaptis@gmail.com',
+            ],
         ];
     @endphp
     <script type="application/ld+json">{!! json_encode($orgLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
@@ -86,6 +92,7 @@
                     <a href="{{ route('aptis') }}" class="hover:text-slate-800">Luyện thi APTIS</a>
                     <a href="{{ route('catalog') }}" class="hover:text-slate-800">Ngân hàng đề</a>
                     <a href="{{ route('policy.refund') }}" class="hover:text-slate-800">Chính sách hoàn tiền</a>
+                    <a href="mailto:nhaiaptis@gmail.com" class="hover:text-slate-800">Liên hệ</a>
                 </nav>
             </div>
             <p class="mt-4 text-xs leading-relaxed text-slate-400">
