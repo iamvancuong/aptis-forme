@@ -77,7 +77,7 @@ class PaymentController extends Controller
 
     private function paymentDescription(Order $order): string
     {
-        return $order->sale_code ? "APTIS {$order->sale_code}" : 'Thanh toan APTIS';
+        return $order->sale_code ? "nhaiaptis {$order->sale_code}" : 'Thanh toan nhaiaptis';
     }
 
     private function checkoutUrl(Order $order): string
