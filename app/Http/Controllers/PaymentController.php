@@ -40,9 +40,13 @@ class PaymentController extends Controller
             return view('payment.pending', ['order' => $order, 'package' => $package, 'state' => 'unconfigured']);
         }
 
-        // ♻️ Đơn đã có link PayOS → tái dùng (PayOS cấm 2 link cùng orderCode).
+        // ♻️ Đơn đã có link PayOS → tái dùng QR đã lưu (PayOS cấm 2 link cùng orderCode).
         if ($order->payos_link_id) {
-            return redirect()->away($this->checkoutUrl($order));
+            if (! empty($order->meta['qr'])) {
+                return $this->renderCheckout($order, $package);
+            }
+
+            return redirect()->away($this->checkoutUrl($order)); // đơn cũ chưa lưu QR
         }
 
         try {
@@ -55,10 +59,17 @@ class PaymentController extends Controller
 
             $order->update([
                 'payos_link_id' => $link['paymentLinkId'],
-                'meta' => array_merge((array) $order->meta, ['checkout_url' => $link['checkoutUrl']]),
+                'meta' => array_merge((array) $order->meta, [
+                    'checkout_url' => $link['checkoutUrl'],
+                    'qr' => $link['qrCode'],
+                    'account_number' => $link['accountNumber'],
+                    'bin' => $link['bin'],
+                    'amount' => $link['amount'],
+                    'transfer_content' => $link['description'],
+                ]),
             ]);
 
-            return redirect()->away($link['checkoutUrl']);
+            return $this->renderCheckout($order->fresh(), $package);
         } catch (\Throwable $e) {
             Log::error('PayOS create link failed', ['order' => $order->id, 'error' => $e->getMessage()]);
 
@@ -73,6 +84,30 @@ class PaymentController extends Controller
                 'retryUrl' => URL::signedRoute('payment.show', $order),
             ]);
         }
+    }
+
+    /** Trang thanh toán RIÊNG (brand nhaiaptis) — tự vẽ QR, KHÔNG hiện tên chủ tài khoản. */
+    private function renderCheckout(Order $order, $package)
+    {
+        return view('payment.checkout', [
+            'order' => $order,
+            'package' => $package,
+            'qr' => $order->meta['qr'] ?? '',
+            'accountNumber' => $order->meta['account_number'] ?? '',
+            'amount' => (int) ($order->meta['amount'] ?? $order->amount),
+            'content' => $order->meta['transfer_content'] ?? $this->paymentDescription($order),
+            'checkoutUrl' => $order->meta['checkout_url'] ?? '',
+            'statusUrl' => route('payment.status', $order),
+        ]);
+    }
+
+    /** Kiểm tra trạng thái đơn (JS poll để tự chuyển khi đã thanh toán). */
+    public function status(Order $order)
+    {
+        return response()->json([
+            'paid' => $order->isPaid(),
+            'status' => $order->status,
+        ]);
     }
 
     private function paymentDescription(Order $order): string

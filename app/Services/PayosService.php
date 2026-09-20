@@ -57,6 +57,10 @@ class PayosService
             'checkoutUrl' => $data['checkoutUrl'] ?? '',
             'qrCode' => $data['qrCode'] ?? '',
             'paymentLinkId' => $data['paymentLinkId'] ?? '',
+            'accountNumber' => $data['accountNumber'] ?? '',
+            'bin' => $data['bin'] ?? '',
+            'amount' => $data['amount'] ?? (int) $order->amount,
+            'description' => $data['description'] ?? $description,
         ];
     }
 

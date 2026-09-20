@@ -82,6 +82,8 @@ Route::get('/thanh-toan/{order}/thanh-cong', [PaymentController::class, 'return'
     ->middleware('signed:code,id,cancel,status,orderCode')->name('payment.return');
 Route::get('/thanh-toan/{order}/huy', [PaymentController::class, 'cancel'])
     ->middleware('signed:code,id,cancel,status,orderCode')->name('payment.cancel');
+Route::get('/thanh-toan/{order}/trang-thai', [PaymentController::class, 'status'])
+    ->middleware('throttle:120,1')->name('payment.status');
 Route::post('/webhooks/payos', [PaymentController::class, 'webhook'])->name('payment.webhook');
 // 🧪 Giả lập thanh toán — controller tự chặn khi PAYOS_FAKE khác true.
 Route::get('/thanh-toan/{order}/gia-lap', [PaymentController::class, 'devFulfill'])->name('payment.dev-fulfill');
