@@ -47,6 +47,7 @@ function logout() {
                     <a v-if="user?.role === 'admin'" href="/admin"
                        class="rounded-lg bg-slate-900 px-3 py-1.5 font-medium text-white hover:bg-slate-800">Admin</a>
                     <span class="hidden text-slate-500 sm:inline">Xin chào, <b class="text-slate-800">{{ user?.name }}</b></span>
+                    <Link href="/doi-mat-khau" class="rounded-lg px-3 py-1.5 text-slate-500 hover:bg-slate-100 hover:text-brand-600">Đổi mật khẩu</Link>
                     <button @click="logout" class="rounded-lg px-3 py-1.5 text-slate-500 hover:bg-slate-100 hover:text-red-600">Đăng xuất</button>
                 </div>
             </div>

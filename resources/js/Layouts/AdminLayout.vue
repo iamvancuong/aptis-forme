@@ -44,6 +44,7 @@ function logout() {
                 </div>
                 <div class="flex items-center gap-3">
                     <a href="/dashboard" class="text-sm text-slate-300 hover:text-white">Trang học viên</a>
+                    <Link href="/doi-mat-khau" class="text-sm text-slate-300 hover:text-white">Đổi mật khẩu</Link>
                     <button @click="logout" class="text-sm text-slate-300 hover:text-white">Đăng xuất</button>
                 </div>
             </div>
