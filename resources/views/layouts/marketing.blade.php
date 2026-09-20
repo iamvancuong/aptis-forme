@@ -51,7 +51,8 @@
             <nav class="flex items-center gap-1 text-sm sm:gap-2">
                 <a href="{{ route('aptis') }}" class="hidden rounded-lg px-3 py-2 text-slate-600 hover:text-brand-600 sm:block">Luyện thi APTIS</a>
                 <a href="{{ route('catalog') }}" class="hidden rounded-lg px-3 py-2 text-slate-600 hover:text-brand-600 sm:block">Ngân hàng đề</a>
-                <a href="{{ route('register') }}" class="rounded-lg px-3 py-2 text-slate-600 hover:text-brand-600">Đăng ký</a>
+                <a href="{{ route('promo.show') }}" class="rounded-lg px-3 py-2 font-medium text-emerald-600 hover:text-emerald-700">🎁 Học free</a>
+                <a href="{{ route('register') }}" class="hidden rounded-lg px-3 py-2 text-slate-600 hover:text-brand-600 sm:block">Đăng ký</a>
                 <a href="{{ route('login') }}" class="rounded-lg bg-brand-600 px-4 py-2 font-medium text-white shadow-sm shadow-brand-600/20 hover:bg-brand-700">Đăng nhập</a>
             </nav>
         </div>

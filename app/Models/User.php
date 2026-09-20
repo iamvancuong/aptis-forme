@@ -13,6 +13,7 @@ class User extends Authenticatable
 
     public const SOURCE_MANUAL = 'manual';
     public const SOURCE_PURCHASE = 'purchase';
+    public const SOURCE_PROMO = 'promo';
 
     protected $fillable = [
         'name',

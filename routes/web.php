@@ -23,6 +23,11 @@ Route::get('/hoc-thu/{skill}', [\App\Http\Controllers\TrialController::class, 's
 Route::post('/hoc-thu/{set}/check', [\App\Http\Controllers\TrialController::class, 'check'])
     ->middleware('throttle:120,1')->name('trial.check');
 
+// Nhập mã khuyến mãi → học free 1 ngày
+Route::get('/nhap-ma', [\App\Http\Controllers\PromoController::class, 'show'])->name('promo.show');
+Route::post('/nhap-ma', [\App\Http\Controllers\PromoController::class, 'redeem'])
+    ->middleware('throttle:10,1')->name('promo.redeem');
+
 Route::view('/chinh-sach-hoan-tien', 'policy.refund')->name('policy.refund');
 Route::view('/gioi-thieu', 'pages.gioi-thieu')->name('about');
 Route::view('/luyen-thi-aptis', 'pages.luyen-thi-aptis')->name('aptis');
@@ -34,6 +39,7 @@ Route::get('/sitemap.xml', function () {
         ['loc' => route('home'), 'priority' => '1.0', 'freq' => 'weekly'],
         ['loc' => route('aptis'), 'priority' => '0.9', 'freq' => 'monthly'],
         ['loc' => route('catalog'), 'priority' => '0.8', 'freq' => 'weekly'],
+        ['loc' => route('promo.show'), 'priority' => '0.7', 'freq' => 'weekly'],
         ['loc' => route('about'), 'priority' => '0.8', 'freq' => 'monthly'],
         ['loc' => route('register'), 'priority' => '0.9', 'freq' => 'weekly'],
         ['loc' => route('policy.refund'), 'priority' => '0.3', 'freq' => 'yearly'],
