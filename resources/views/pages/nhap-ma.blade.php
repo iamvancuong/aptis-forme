@@ -34,8 +34,16 @@
                        class="mt-1 w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm uppercase shadow-sm focus:border-brand-500 focus:ring-brand-500">
             </div>
 
-            <button type="submit" class="w-full rounded-xl bg-gradient-to-r from-brand-600 to-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 hover:opacity-95">
-                Nhận tài khoản miễn phí
+            <button type="submit" id="promoSubmit"
+                    class="w-full rounded-xl bg-gradient-to-r from-brand-600 to-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70">
+                <span class="btn-label">Nhận tài khoản miễn phí</span>
+                <span class="btn-loading hidden items-center justify-center gap-2">
+                    <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    Đang xử lý…
+                </span>
             </button>
         </form>
 
@@ -71,6 +79,25 @@
             ];
             f.value = parts.join('|').slice(0, 250);
         } catch (e) { /* bỏ qua */ }
+    })();
+
+    // Chống spam click: khi bấm nộp → khoá nút + hiện loading (chỉ nộp 1 lần).
+    (function () {
+        var form = document.getElementById('promoForm');
+        if (!form) return;
+        var busy = false;
+        form.addEventListener('submit', function (e) {
+            if (busy) { e.preventDefault(); return; }   // đã bấm rồi → chặn
+            busy = true;
+            var btn = document.getElementById('promoSubmit');
+            if (btn) {
+                btn.disabled = true;
+                var label = btn.querySelector('.btn-label');
+                var loading = btn.querySelector('.btn-loading');
+                if (label) label.classList.add('hidden');
+                if (loading) { loading.classList.remove('hidden'); loading.classList.add('inline-flex'); }
+            }
+        });
     })();
 </script>
 @endsection
