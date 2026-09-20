@@ -160,4 +160,53 @@
         </div>
     </section>
 
+    {{-- Popup ưu đãi: dùng mã NHAIAPTIS học miễn phí → điều hướng /nhap-ma --}}
+    <div id="promoPopup" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 px-4 backdrop-blur-sm">
+        <div class="relative w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-2xl ring-1 ring-slate-200">
+            <button type="button" onclick="closePromoPopup()" aria-label="Đóng"
+                    class="absolute right-4 top-4 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="text-5xl">🎁</div>
+            <h2 class="mt-3 text-2xl font-extrabold text-slate-900">Học APTIS miễn phí!</h2>
+            <p class="mt-2 text-slate-600">Sử dụng mã dưới đây để được học miễn phí nhé 👇</p>
+            <div class="mt-4 rounded-2xl border-2 border-dashed border-brand-300 bg-brand-50 px-4 py-3">
+                <span class="text-2xl font-black tracking-[0.2em] text-brand-700">NHAIAPTIS</span>
+            </div>
+            <a href="{{ route('promo.show', ['code' => 'NHAIAPTIS']) }}"
+               class="mt-6 block rounded-2xl bg-gradient-to-r from-brand-600 to-violet-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-600/25 hover:opacity-95">
+                Nhập mã học miễn phí ngay →
+            </a>
+            <button type="button" onclick="closePromoPopup()" class="mt-3 text-sm text-slate-400 hover:text-slate-600">Để sau</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var KEY = 'promo_popup_seen';
+            var el = document.getElementById('promoPopup');
+            if (!el) return;
+            window.closePromoPopup = function () {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+                try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+            };
+            // Bấm ra nền tối để đóng
+            el.addEventListener('click', function (e) { if (e.target === el) closePromoPopup(); });
+            // Phím ESC để đóng
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePromoPopup(); });
+            // Hiện 1 lần mỗi phiên truy cập, sau 0.8s cho mượt
+            var seen = false;
+            try { seen = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+            if (!seen) {
+                setTimeout(function () {
+                    el.classList.remove('hidden');
+                    el.classList.add('flex');
+                }, 800);
+            }
+        })();
+    </script>
+
 @endsection

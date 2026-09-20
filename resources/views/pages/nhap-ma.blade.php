@@ -29,7 +29,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-700">Mã khuyến mãi</label>
-                <input type="text" name="code" value="{{ old('code') }}" required autocapitalize="characters"
+                <input type="text" name="code" value="{{ old('code', request('code')) }}" required autocapitalize="characters"
                        placeholder="Nhập mã bạn nhận được"
                        class="mt-1 w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm uppercase shadow-sm focus:border-brand-500 focus:ring-brand-500">
             </div>
