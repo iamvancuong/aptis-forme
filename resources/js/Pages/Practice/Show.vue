@@ -26,6 +26,8 @@ for (const q of props.questions) {
     else if (q.type === 'sentence_ordering') answers[q.id] = (m.sentences || []).slice(1);
     else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)
         || (m.statements && m.shared_choices)                       // Listening Part 3
+        || q.type === 'text_question_match'                         // Reading Part 3
+        || q.type === 'matching_headings'                          // Reading Part 4
         || (q.skill === 'listening' && m.questions)) answers[q.id] = {}; // Listening Part 4
     else if (q.skill === 'writing') {
         if (m.fields) answers[q.id] = m.fields.map(() => '');

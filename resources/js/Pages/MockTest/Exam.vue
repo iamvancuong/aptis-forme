@@ -25,6 +25,8 @@ for (const s of props.sections) {
         else if (q.type === 'sentence_ordering') answers[s.index][q.id] = (m.sentences || []).slice(1);
         else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)
             || (m.statements && m.shared_choices)                       // Listening Part 3
+            || q.type === 'text_question_match'                         // Reading Part 3
+            || q.type === 'matching_headings'                          // Reading Part 4
             || (q.skill === 'listening' && m.questions)) answers[s.index][q.id] = {}; // Listening Part 4
         else answers[s.index][q.id] = '';
         flat.push({ sectionIndex: s.index, part: s.part, question: q });

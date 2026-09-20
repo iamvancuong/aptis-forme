@@ -24,6 +24,9 @@ function move(list, from, to) {
     answer.value = arr;
 }
 const orderingList = computed(() => Array.isArray(answer.value) && answer.value.length ? answer.value : orderable.value);
+
+// Nhãn chữ cái cho lựa chọn (A, B, C…) — Reading Part 3
+const letter = (i) => String.fromCharCode(65 + i);
 </script>
 
 <template>
@@ -34,6 +37,9 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
         <div v-if="question.audio_url" class="mt-3">
             <audio :src="question.audio_url" controls class="w-full"></audio>
         </div>
+        <!-- listening không có audio → báo nhỏ, đỏ, in nghiêng (trừ Part 2 dùng audio riêng theo người nói) -->
+        <p v-else-if="question.skill === 'listening' && !(question.audio_urls && question.audio_urls.length)"
+           class="mt-3 text-xs italic text-red-500">Không có audio</p>
 
         <!-- Ảnh đề (Speaking Part 2/4, Reading… — lấy từ metadata, /storage/) -->
         <div v-if="meta.image_path" class="mt-3">
@@ -80,6 +86,49 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
             </div>
         </div>
 
+        <!-- Reading Part 3 (text_question_match): đọc các đoạn A/B/C/D rồi gán mỗi câu hỏi vào 1 đoạn → {qi: optionIndex} -->
+        <div v-else-if="question.type === 'text_question_match'" class="mt-3 space-y-4">
+            <div class="space-y-3">
+                <div v-for="(opt, oi) in meta.options" :key="oi" class="rounded-lg bg-slate-50 p-3 text-sm leading-relaxed text-slate-700">
+                    <span class="mr-1 font-bold text-brand-600">{{ letter(oi) }}.</span>
+                    <span>{{ opt }}</span>
+                </div>
+            </div>
+            <div class="space-y-3 border-t border-slate-100 pt-3">
+                <div v-for="(q, qi) in meta.questions" :key="qi"
+                     class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 text-sm">
+                    <span class="flex-1 text-slate-800">{{ qi + 1 }}. {{ q }}</span>
+                    <select :value="(answer || {})[qi] ?? ''"
+                            @change="e => { answer = { ...(answer||{}), [qi]: e.target.value }; }"
+                            class="rounded-md border border-slate-300 px-2 py-1 text-sm">
+                        <option value="" disabled>— chọn —</option>
+                        <option v-for="(opt, oi) in meta.options" :key="oi" :value="String(oi)">{{ letter(oi) }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading Part 4 (matching_headings): gán tiêu đề phù hợp cho mỗi đoạn → {pi: headingIndex} -->
+        <div v-else-if="question.type === 'matching_headings'" class="mt-3 space-y-4">
+            <div v-if="meta.headings" class="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
+                <div class="mb-1 font-medium text-slate-700">Danh sách tiêu đề:</div>
+                <ol class="list-inside list-decimal space-y-0.5">
+                    <li v-for="(h, hi) in meta.headings" :key="hi">{{ h }}</li>
+                </ol>
+            </div>
+            <div class="space-y-4">
+                <div v-for="(para, pi) in meta.paragraphs" :key="pi" class="space-y-2">
+                    <div class="text-sm leading-relaxed text-slate-800"><b class="text-brand-600">Đoạn {{ pi + 1 }}.</b> {{ para }}</div>
+                    <select :value="(answer || {})[pi] ?? ''"
+                            @change="e => { answer = { ...(answer||{}), [pi]: e.target.value }; }"
+                            class="w-full rounded-md border border-slate-300 px-2 py-1 text-sm">
+                        <option value="" disabled>— chọn tiêu đề —</option>
+                        <option v-for="(h, hi) in meta.headings" :key="hi" :value="String(hi)">{{ hi + 1 }}. {{ h }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- vocab match: pairs + dropdown_pool → {id: word} -->
         <div v-else-if="meta.pairs && meta.dropdown_pool" class="mt-3 space-y-2">
             <div v-for="p in meta.pairs" :key="p.id" class="flex items-center gap-3 text-sm">
@@ -103,6 +152,7 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
                     <!-- Listening Part 2: mỗi người nói có audio riêng -->
                     <audio v-if="question.audio_urls && question.audio_urls[ii]"
                            :src="question.audio_urls[ii]" controls class="mt-1 w-full max-w-xs"></audio>
+                    <p v-else-if="question.skill === 'listening'" class="mt-1 text-xs italic text-red-500">Không có audio</p>
                 </div>
                 <select :value="(answer || {})[ii] ?? ''"
                         @change="e => { answer = { ...(answer||{}), [ii]: e.target.value }; }"
