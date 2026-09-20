@@ -6,90 +6,91 @@
     <meta name="color-scheme" content="light">
     <title>nhaiaptis</title>
 </head>
-<body style="margin:0; padding:0; background-color:#f1f5f9; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9; padding:24px 12px;">
+<body style="margin:0; padding:0; background-color:#ffffff; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff; padding:40px 16px;">
         <tr>
             <td align="center">
-                <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px; width:100%;">
 
-                    <!-- Header gradient -->
+                    <!-- Brand -->
                     <tr>
-                        <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:28px 32px; text-align:center;">
-                            <div style="font-size:24px; font-weight:800; letter-spacing:-0.5px; color:#ffffff;">
-                                🐦 nhaiaptis
-                            </div>
-                            <div style="margin-top:4px; font-size:13px; color:#e0e7ff;">Luyện thi APTIS online</div>
+                        <td style="padding-bottom:36px;">
+                            <span style="font-size:18px; font-weight:800; letter-spacing:-0.4px; color:#0f172a;">nhai<span style="color:#94a3b8;">aptis</span></span>
                         </td>
                     </tr>
 
-                    <!-- Body -->
+                    <!-- Heading -->
                     <tr>
-                        <td style="padding:32px;">
+                        <td>
                             @if ($isNew)
-                                <h1 style="margin:0 0 8px; font-size:20px; color:#0f172a;">Chào mừng bạn! 🎉</h1>
-                                <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:#475569;">
-                                    Tài khoản luyện thi APTIS của bạn đã được tạo. Dưới đây là thông tin đăng nhập:
-                                </p>
-
-                                <!-- Credentials card -->
-                                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:12px;">
-                                    <tr>
-                                        <td style="padding:16px 20px;">
-                                            <div style="font-size:12px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">Email</div>
-                                            <div style="margin-top:2px; font-size:15px; font-weight:600; color:#0f172a;">{{ $email }}</div>
-                                        </td>
-                                    </tr>
-                                    <tr><td style="border-top:1px solid #e2e8f0;"></td></tr>
-                                    <tr>
-                                        <td style="padding:16px 20px;">
-                                            <div style="font-size:12px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">Mật khẩu</div>
-                                            <div style="margin-top:4px; display:inline-block; font-family:'Courier New',monospace; font-size:18px; font-weight:700; letter-spacing:1px; color:#4f46e5; background-color:#eef2ff; padding:6px 14px; border-radius:8px;">{{ $password }}</div>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <p style="margin:16px 0 0; font-size:13px; line-height:1.6; color:#b45309; background-color:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:12px 14px;">
-                                    ⚠️ Vì lý do bảo mật, vui lòng <b>đổi mật khẩu ngay</b> ở lần đăng nhập đầu tiên.
+                                <h1 style="margin:0; font-size:28px; line-height:1.25; font-weight:800; letter-spacing:-0.5px; color:#0f172a;">
+                                    Tài khoản của bạn<br>đã sẵn sàng.
+                                </h1>
+                                <p style="margin:16px 0 0; font-size:15px; line-height:1.65; color:#64748b;">
+                                    Cảm ơn bạn đã tham gia. Dùng thông tin bên dưới để đăng nhập và bắt đầu luyện thi APTIS.
                                 </p>
                             @else
-                                <h1 style="margin:0 0 8px; font-size:20px; color:#0f172a;">Tài khoản đã được gia hạn ✅</h1>
-                                <p style="margin:0 0 8px; font-size:15px; line-height:1.6; color:#475569;">
-                                    Tài khoản <b style="color:#0f172a;">{{ $email }}</b> của bạn đã được gia hạn thành công. Chúc bạn ôn luyện hiệu quả!
+                                <h1 style="margin:0; font-size:28px; line-height:1.25; font-weight:800; letter-spacing:-0.5px; color:#0f172a;">
+                                    Đã gia hạn<br>thành công.
+                                </h1>
+                                <p style="margin:16px 0 0; font-size:15px; line-height:1.65; color:#64748b;">
+                                    Tài khoản <b style="color:#0f172a;">{{ $email }}</b> đã được gia hạn. Chúc bạn ôn luyện hiệu quả!
                                 </p>
                             @endif
+                        </td>
+                    </tr>
 
-                            @if ($expiresAt)
-                                <p style="margin:20px 0 0; font-size:15px; color:#475569;">
-                                    <span style="color:#94a3b8;">Hạn sử dụng:</span>
-                                    <b style="color:#0f172a;">{{ $expiresAt->format('d/m/Y') }}</b>
-                                </p>
-                            @endif
+                    @if ($isNew)
+                    <!-- Credentials -->
+                    <tr>
+                        <td style="padding-top:32px;">
+                            <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#94a3b8;">Email đăng nhập</div>
+                            <div style="margin-top:6px; font-size:16px; font-weight:600; color:#0f172a;">{{ $email }}</div>
 
-                            <!-- CTA button -->
-                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0 8px;">
+                            <div style="margin-top:24px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#94a3b8;">Mật khẩu</div>
+                            <div style="margin-top:8px; font-family:'SFMono-Regular',Consolas,'Courier New',monospace; font-size:26px; font-weight:700; letter-spacing:4px; color:#0f172a; background-color:#f1f5f9; border:1px solid #e2e8f0; border-radius:12px; padding:18px 20px; text-align:center;">
+                                {{ $password }}
+                            </div>
+                            <div style="margin-top:10px; font-size:13px; color:#94a3b8;">Hãy đổi mật khẩu ngay ở lần đăng nhập đầu tiên.</div>
+                        </td>
+                    </tr>
+                    @endif
+
+                    @if ($expiresAt)
+                    <tr>
+                        <td style="padding-top:24px;">
+                            <div style="border-top:1px solid #f1f5f9; padding-top:16px; font-size:14px; color:#64748b;">
+                                Hạn sử dụng: <b style="color:#0f172a;">{{ $expiresAt->format('d/m/Y') }}</b>
+                            </div>
+                        </td>
+                    </tr>
+                    @endif
+
+                    <!-- CTA -->
+                    <tr>
+                        <td style="padding-top:32px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td align="center" style="border-radius:12px; background:linear-gradient(135deg,#4f46e5,#7c3aed);">
-                                        <a href="{{ $loginUrl }}" target="_blank"
-                                           style="display:inline-block; padding:14px 32px; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:12px;">
-                                            Đăng nhập ngay →
+                                    <td align="center" style="border-radius:12px; background-color:#0f172a;">
+                                        <a href="{{ $loginUrl }}" target="_blank" style="display:block; padding:16px; font-size:15px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:12px;">
+                                            Đăng nhập ngay
                                         </a>
                                     </td>
                                 </tr>
                             </table>
-                            <p style="margin:8px 0 0; font-size:12px; color:#94a3b8;">
-                                Hoặc mở: <a href="{{ $loginUrl }}" style="color:#6366f1;">{{ $loginUrl }}</a>
-                            </p>
+                            <div style="margin-top:12px; font-size:12px; color:#cbd5e1; text-align:center;">
+                                {{ $loginUrl }}
+                            </div>
                         </td>
                     </tr>
 
                     <!-- Footer -->
                     <tr>
-                        <td style="padding:20px 32px; background-color:#f8fafc; border-top:1px solid #e2e8f0; text-align:center;">
-                            <p style="margin:0; font-size:13px; color:#64748b;">Chúc bạn học tốt,<br><b style="color:#334155;">Đội ngũ nhaiaptis</b></p>
-                            <p style="margin:12px 0 0; font-size:11px; line-height:1.5; color:#94a3b8;">
-                                © {{ date('Y') }} nhaiaptis · Nền tảng luyện thi APTIS độc lập, không liên kết chính thức với British Council.<br>
-                                Email này được gửi tự động, vui lòng không trả lời.
-                            </p>
+                        <td style="padding-top:40px;">
+                            <div style="border-top:1px solid #f1f5f9; padding-top:20px; font-size:12px; line-height:1.6; color:#cbd5e1;">
+                                © {{ date('Y') }} nhaiaptis — nền tảng luyện thi APTIS độc lập, không liên kết chính thức với British Council.<br>
+                                Email tự động, vui lòng không trả lời.
+                            </div>
                         </td>
                     </tr>
 
