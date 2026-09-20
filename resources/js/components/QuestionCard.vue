@@ -59,8 +59,8 @@ const letter = (i) => String.fromCharCode(65 + i);
             </label>
         </div>
 
-        <!-- listening_mcq: choices[] chọn theo index -->
-        <div v-else-if="question.type === 'listening_mcq'" class="mt-3">
+        <!-- listening_mcq: choices[] chọn theo index (gồm cả slug lạ 'listening-part-1') -->
+        <div v-else-if="question.type === 'listening_mcq' || (question.skill === 'listening' && Number(question.part) === 1 && meta.choices)" class="mt-3">
             <div v-if="meta.description" class="mb-3 rounded-lg bg-slate-50 p-3 text-sm text-slate-600" v-html="meta.description"></div>
             <div class="space-y-2">
                 <label v-for="(c, i) in meta.choices" :key="i"
@@ -209,6 +209,9 @@ const letter = (i) => String.fromCharCode(65 + i);
 
         <!-- WRITING: nhập bài, chấm AI sau khi nộp -->
         <div v-else-if="question.skill === 'writing'" class="mt-3 space-y-3">
+            <!-- Tiêu đề đề bài (như v1: "Art Club - Part 2") -->
+            <div v-if="question.title" class="text-sm font-semibold text-brand-600">{{ question.title }}</div>
+
             <!-- Part 1: nhiều câu ngắn theo fields -->
             <template v-if="meta.fields">
                 <div v-for="(f, fi) in meta.fields" :key="fi">
@@ -221,22 +224,39 @@ const letter = (i) => String.fromCharCode(65 + i);
             <!-- Part 3: trả lời từng post -->
             <template v-else-if="meta.questions">
                 <div v-for="(pq, pi) in meta.questions" :key="pi">
-                    <label class="block text-sm text-slate-600">Bài {{ pi + 1 }}: {{ pq.prompt }}</label>
+                    <label class="block text-sm font-medium text-slate-700">Bài {{ pi + 1 }}: {{ typeof pq === 'string' ? pq : pq.prompt }}</label>
+                    <p v-if="pq.word_limit" class="mt-0.5 text-xs text-slate-400">Viết {{ pq.word_limit.min }}–{{ pq.word_limit.max }} từ</p>
                     <textarea :value="(answer || [])[pi] ?? ''" rows="3"
                               @input="e => { const a = Array.isArray(answer) ? [...answer] : []; a[pi] = e.target.value; answer = a; }"
                               class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 focus:outline-none"></textarea>
                 </div>
             </template>
-            <!-- Part 4: 2 email -->
+            <!-- Part 4: đọc email → viết 2 email -->
             <template v-else-if="meta.task1 || meta.task2">
+                <!-- Email nhận được (đề để đọc) -->
+                <div v-if="meta.email || meta.context" class="rounded-xl bg-slate-50 p-4 text-sm ring-1 ring-slate-200">
+                    <div class="mb-2 text-xs font-semibold uppercase tracking-wide text-brand-600">✉️ Email nhận được</div>
+                    <p v-if="meta.context" class="mb-2 italic text-slate-500">{{ meta.context }}</p>
+                    <template v-if="meta.email">
+                        <div v-if="meta.email.greeting" class="font-bold text-slate-800">{{ meta.email.greeting }}</div>
+                        <div v-if="meta.email.body" class="mt-1 whitespace-pre-line leading-relaxed text-slate-700">{{ meta.email.body }}</div>
+                        <div v-if="meta.email.sign_off" class="mt-2 whitespace-pre-line font-medium text-slate-800">{{ meta.email.sign_off }}</div>
+                    </template>
+                </div>
+                <!-- Task 1 -->
                 <div>
-                    <label class="block text-sm text-slate-600">Task 1 — Email thân mật (~50 từ)</label>
+                    <label class="block text-sm font-medium text-slate-700">Task 1 — Email thân mật</label>
+                    <p v-if="meta.task1 && meta.task1.instruction" class="mt-0.5 text-xs text-slate-500">{{ meta.task1.instruction }}</p>
+                    <p v-if="meta.task1 && meta.task1.word_limit" class="text-xs text-slate-400">Khoảng {{ meta.task1.word_limit.min }}–{{ meta.task1.word_limit.max }} từ</p>
                     <textarea :value="(answer || {}).task1 ?? ''" rows="4"
                               @input="e => { answer = { ...(answer||{}), task1: e.target.value }; }"
                               class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 focus:outline-none"></textarea>
                 </div>
+                <!-- Task 2 -->
                 <div>
-                    <label class="block text-sm text-slate-600">Task 2 — Email trang trọng (120–150 từ)</label>
+                    <label class="block text-sm font-medium text-slate-700">Task 2 — Email trang trọng</label>
+                    <p v-if="meta.task2 && meta.task2.instruction" class="mt-0.5 text-xs text-slate-500">{{ meta.task2.instruction }}</p>
+                    <p v-if="meta.task2 && meta.task2.word_limit" class="text-xs text-slate-400">Khoảng {{ meta.task2.word_limit.min }}–{{ meta.task2.word_limit.max }} từ</p>
                     <textarea :value="(answer || {}).task2 ?? ''" rows="6"
                               @input="e => { answer = { ...(answer||{}), task2: e.target.value }; }"
                               class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 focus:outline-none"></textarea>
@@ -244,7 +264,13 @@ const letter = (i) => String.fromCharCode(65 + i);
             </template>
             <!-- Part 2: 1 đoạn -->
             <template v-else>
-                <textarea :value="answer || ''" rows="4" placeholder="Viết bài của bạn…"
+                <!-- Đề bài (scenario) + gợi ý -->
+                <div v-if="meta.scenario || meta.hints" class="rounded-xl bg-slate-50 p-4 text-sm ring-1 ring-slate-200">
+                    <p v-if="meta.scenario" class="text-slate-700">{{ meta.scenario }}</p>
+                    <p v-if="meta.hints" class="mt-2 text-amber-700">💡 {{ meta.hints }}</p>
+                </div>
+                <p v-if="meta.word_limit" class="text-xs text-slate-400">Viết {{ meta.word_limit.min }}–{{ meta.word_limit.max }} từ</p>
+                <textarea :value="answer || ''" rows="5" placeholder="Viết bài của bạn…"
                           @input="e => answer = e.target.value"
                           class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-200 focus:outline-none"></textarea>
             </template>
