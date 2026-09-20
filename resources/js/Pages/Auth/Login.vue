@@ -24,11 +24,11 @@ function submit() {
 
     <main class="min-h-screen flex items-center justify-center px-6 bg-slate-50">
         <div class="w-full max-w-sm">
-            <div class="text-center mb-8">
-                <BrandLogo :size="56" class="mx-auto" />
+            <a href="/" class="mb-8 flex flex-col items-center text-center">
+                <BrandLogo :size="56" />
                 <h1 class="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">nhai<span class="text-slate-400">aptis</span></h1>
                 <p class="mt-1 text-sm text-slate-500">Đăng nhập để vào luyện thi</p>
-            </div>
+            </a>
 
             <div v-if="flashError" class="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
                 {{ flashError }}
@@ -71,6 +71,10 @@ function submit() {
                     {{ form.processing ? 'Đang đăng nhập…' : 'Đăng nhập' }}
                 </button>
             </form>
+
+            <div class="mt-6 text-center">
+                <a href="/" class="text-sm text-slate-500 hover:text-brand-600">← Về trang chủ</a>
+            </div>
         </div>
     </main>
 </template>
