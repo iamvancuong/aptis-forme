@@ -4,50 +4,35 @@
 @section('meta_description', 'Luyện thi APTIS đạt điểm cao: học thử miễn phí, thi thử full đề, AI chấm Writing & Speaking. Giá ưu đãi.')
 
 @push('jsonld')
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Course",
-    "name": "Luyện thi APTIS online",
-    "description": "Luyện thi APTIS đủ 4 kỹ năng Reading, Listening, Writing, Speaking: học thử miễn phí, thi thử full đề có tính giờ và AI chấm Writing & Speaking theo tiêu chí APTIS.",
-    "provider": { "@type": "Organization", "name": "nhaiaptis", "sameAs": "{{ url('/') }}" },
-    "offers": [
-        @foreach ($packages as $p)
-        {
-            "@type": "Offer",
-            "name": {!! json_encode($p['label']) !!},
-            "price": "{{ (int) $p['price'] }}",
-            "priceCurrency": "VND",
-            "category": "Paid",
-            "url": "{{ route('register') }}"
-        }@if (! $loop->last),@endif
-        @endforeach
-    ]
-}
-</script>
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-        {
-            "@type": "Question",
-            "name": "Luyện thi APTIS trên nhaiaptis có gì?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Luyện tập theo từng kỹ năng (Reading, Listening, Writing, Speaking), thi thử full đề có tính giờ và được AI chấm Writing & Speaking theo tiêu chí APTIS." }
-        },
-        {
-            "@type": "Question",
-            "name": "Có được học thử miễn phí không?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Có. Bạn học thử ngay mỗi kỹ năng bằng đề thật mà không cần đăng nhập hay nhập thẻ." }
-        },
-        {
-            "@type": "Question",
-            "name": "AI chấm Writing và Speaking như thế nào?",
-            "acceptedAnswer": { "@type": "Answer", "text": "AI phiên âm bài nói và phân tích bài viết, cho điểm cùng nhận xét chi tiết theo các tiêu chí CEFR/APTIS như ngữ pháp, từ vựng, độ trôi chảy và hoàn thành yêu cầu." }
-        }
-    ]
-}
-</script>
+@php
+    $courseLd = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Course',
+        'name' => 'Luyện thi APTIS online',
+        'description' => 'Luyện thi APTIS đủ 4 kỹ năng Reading, Listening, Writing, Speaking: học thử miễn phí, thi thử full đề có tính giờ và AI chấm Writing & Speaking theo tiêu chí APTIS.',
+        'provider' => ['@type' => 'Organization', 'name' => 'nhaiaptis', 'sameAs' => url('/')],
+        'offers' => array_map(fn ($p) => [
+            '@type' => 'Offer',
+            'name' => $p['label'],
+            'price' => (string) (int) $p['price'],
+            'priceCurrency' => 'VND',
+            'category' => 'Paid',
+            'url' => route('register'),
+        ], array_values($packages)),
+    ];
+
+    $faqLd = [
+        '@context' => 'https://schema.org',
+        '@type' => 'FAQPage',
+        'mainEntity' => [
+            ['@type' => 'Question', 'name' => 'Luyện thi APTIS trên nhaiaptis có gì?', 'acceptedAnswer' => ['@type' => 'Answer', 'text' => 'Luyện tập theo từng kỹ năng (Reading, Listening, Writing, Speaking), thi thử full đề có tính giờ và được AI chấm Writing & Speaking theo tiêu chí APTIS.']],
+            ['@type' => 'Question', 'name' => 'Có được học thử miễn phí không?', 'acceptedAnswer' => ['@type' => 'Answer', 'text' => 'Có. Bạn học thử ngay mỗi kỹ năng bằng đề thật mà không cần đăng nhập hay nhập thẻ.']],
+            ['@type' => 'Question', 'name' => 'AI chấm Writing và Speaking như thế nào?', 'acceptedAnswer' => ['@type' => 'Answer', 'text' => 'AI phiên âm bài nói và phân tích bài viết, cho điểm cùng nhận xét chi tiết theo các tiêu chí CEFR/APTIS như ngữ pháp, từ vựng, độ trôi chảy và hoàn thành yêu cầu.']],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($courseLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/ld+json">{!! json_encode($faqLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @section('content')
