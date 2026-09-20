@@ -25,6 +25,13 @@ fi
 
 TARGET="$SSH_USER@$SSH_HOST"
 
+# ⚠️ Script này chạy TRÊN MÁY DEV (có Node/npm), KHÔNG chạy trên server.
+if ! command -v npm >/dev/null 2>&1; then
+    echo "❌ Không tìm thấy 'npm'. Script này phải chạy trên MÁY TÍNH của bạn (máy dev có Node)," >&2
+    echo "   KHÔNG chạy trên server. Nó sẽ tự build rồi đẩy lên server qua SSH." >&2
+    exit 1
+fi
+
 echo "==> [1/4] Build asset (npm run build)..."
 npm run build
 
