@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AccountCredentialsMail;
+use App\Models\PromoCode;
 use App\Models\Redemption;
 use App\Models\User;
 use Illuminate\Database\QueryException;
@@ -20,8 +21,13 @@ class PromoController extends Controller
 {
     public function show()
     {
+        // Số ngày hiển thị (marketing): lấy từ mã đang dùng được "hào phóng" nhất.
+        $freeDays = PromoCode::where('is_active', true)
+            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()))
+            ->max('free_days');
+
         return view('pages.nhap-ma', [
-            'freeDays' => (int) config('promo.free_days'),
+            'freeDays' => (int) ($freeDays ?: config('promo.free_days')),
             'enabled' => (bool) config('promo.enabled'),
         ]);
     }
@@ -39,10 +45,16 @@ class PromoController extends Controller
         ]);
 
         $email = mb_strtolower(trim($data['email']));
+        $codeInput = trim($data['code']);
 
-        // 1) Mã đúng?
-        if (! hash_equals(mb_strtolower((string) config('promo.code')), mb_strtolower(trim($data['code'])))) {
+        // 1) Mã tồn tại? còn dùng được? (bật + chưa hết hạn + chưa hết lượt)
+        $promo = PromoCode::whereRaw('UPPER(code) = ?', [mb_strtoupper($codeInput)])->first();
+        if (! $promo) {
             return back()->withInput()->with('error', 'Mã khuyến mãi không đúng. Vui lòng kiểm tra lại.');
+        }
+        [$ok, $reason] = $promo->usability();
+        if (! $ok) {
+            return back()->withInput()->with('error', $reason);
         }
 
         // 2) Email đã dùng? (đã đổi mã HOẶC đã có tài khoản)
@@ -67,11 +79,11 @@ class PromoController extends Controller
         }
 
         // 4) Tạo tài khoản free + ghi nhận đổi mã (transaction, chống race email trùng)
-        $days = (int) config('promo.free_days');
+        $days = (int) $promo->free_days;
         $password = Str::random(10);
 
         try {
-            $user = DB::transaction(function () use ($email, $data, $ip, $fingerprint, $days, $password) {
+            $user = DB::transaction(function () use ($email, $promo, $ip, $fingerprint, $days, $password) {
                 $user = User::create([
                     'name' => strtok($email, '@'),
                     'email' => $email,
@@ -87,7 +99,8 @@ class PromoController extends Controller
 
                 Redemption::create([
                     'email' => $email,
-                    'code' => $data['code'],
+                    'code' => $promo->code,
+                    'promo_code_id' => $promo->id,
                     'ip_address' => $ip,
                     'fingerprint' => $fingerprint,
                     'user_id' => $user->id,

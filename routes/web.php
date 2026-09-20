@@ -155,4 +155,9 @@ Route::middleware(['auth', 'user.blocked', 'admin'])
         Route::post('/users/{user}/reset-ai', [\App\Http\Controllers\Admin\UserController::class, 'resetAi'])->name('users.reset-ai');
 
         Route::get('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
+
+        // Mã khuyến mãi
+        Route::get('/promo-codes', [\App\Http\Controllers\Admin\PromoCodeController::class, 'index'])->name('promo-codes.index');
+        Route::post('/promo-codes', [\App\Http\Controllers\Admin\PromoCodeController::class, 'store'])->name('promo-codes.store');
+        Route::put('/promo-codes/{promoCode}', [\App\Http\Controllers\Admin\PromoCodeController::class, 'update'])->name('promo-codes.update');
     });

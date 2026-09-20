@@ -11,6 +11,7 @@ const nav = [
     { label: 'Tổng quan', href: '/admin' },
     { label: 'Học viên', href: '/admin/users' },
     { label: 'Đơn hàng', href: '/admin/orders' },
+    { label: 'Mã KM', href: '/admin/promo-codes' },
 ];
 
 function isActive(href) {

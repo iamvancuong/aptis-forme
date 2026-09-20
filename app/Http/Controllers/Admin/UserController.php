@@ -15,6 +15,10 @@ class UserController extends Controller
     {
         $q = trim((string) $request->query('q'));
 
+        // Tập user đã từng trả phí → để biết "đã gia hạn".
+        $paidUserIds = Order::where('status', Order::STATUS_PAID)
+            ->whereNotNull('user_id')->pluck('user_id')->unique()->flip();
+
         $users = User::query()
             ->when($q !== '', fn ($query) => $query->where(fn ($w) =>
                 $w->where('email', 'like', "%{$q}%")->orWhere('name', 'like', "%{$q}%")))
@@ -28,6 +32,8 @@ class UserController extends Controller
                 'role' => $u->role,
                 'status' => $u->status,
                 'source' => $u->source,
+                'is_promo' => $u->source === User::SOURCE_PROMO,
+                'converted' => $paidUserIds->has($u->id),
                 'expires_at' => $u->expires_at?->format('d/m/Y'),
                 'is_active_access' => $u->hasActiveAccess(),
             ]);
@@ -60,6 +66,10 @@ class UserController extends Controller
                 'paid_at' => $o->paid_at?->format('d/m/Y'),
             ]);
 
+        $converted = Order::where(fn ($w) => $w->where('user_id', $user->id)->orWhere('email', $user->email))
+            ->where('status', Order::STATUS_PAID)->exists();
+        $promoCode = \App\Models\Redemption::where('user_id', $user->id)->value('code');
+
         return Inertia::render('Admin/UserShow', [
             'user' => [
                 'id' => $user->id,
@@ -68,6 +78,9 @@ class UserController extends Controller
                 'role' => $user->role,
                 'status' => $user->status,
                 'source' => $user->source,
+                'is_promo' => $user->source === User::SOURCE_PROMO,
+                'promo_code' => $promoCode,
+                'converted' => $converted,
                 'target_level' => $user->target_level,
                 'expires_at' => $user->expires_at?->format('d/m/Y'),
                 'is_active_access' => $user->hasActiveAccess(),

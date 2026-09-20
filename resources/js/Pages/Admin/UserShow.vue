@@ -36,7 +36,19 @@ function toggleBlock() {
                     <div class="text-sm text-slate-500">{{ user.email }}</div>
                     <dl class="mt-4 space-y-2 text-sm">
                         <div class="flex justify-between"><dt class="text-slate-500">Trạng thái</dt><dd :class="user.status === 'blocked' ? 'text-red-600' : 'text-emerald-600'">{{ user.status === 'blocked' ? 'Đã khóa' : 'Hoạt động' }}</dd></div>
-                        <div class="flex justify-between"><dt class="text-slate-500">Nguồn</dt><dd>{{ user.source }}</dd></div>
+                        <div class="flex justify-between">
+                            <dt class="text-slate-500">Nguồn</dt>
+                            <dd>
+                                <span v-if="user.is_promo" class="rounded-full bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700">🎁 Mã {{ user.promo_code || 'KM' }}</span>
+                                <span v-else>{{ user.source }}</span>
+                            </dd>
+                        </div>
+                        <div v-if="user.is_promo" class="flex justify-between">
+                            <dt class="text-slate-500">Gia hạn</dt>
+                            <dd :class="user.converted ? 'text-emerald-600 font-medium' : 'text-slate-500'">
+                                {{ user.converted ? 'Đã gia hạn / trả phí' : 'Chưa gia hạn' }}
+                            </dd>
+                        </div>
                         <div class="flex justify-between"><dt class="text-slate-500">Hạn dùng</dt><dd :class="!user.is_active_access && 'text-red-600'">{{ user.expires_at || 'Không giới hạn' }}</dd></div>
                         <div class="flex justify-between"><dt class="text-slate-500">Trình độ đích</dt><dd>{{ user.target_level || '—' }}</dd></div>
                         <div class="flex justify-between"><dt class="text-slate-500">Thiết bị tối đa</dt><dd>{{ user.max_devices }}</dd></div>

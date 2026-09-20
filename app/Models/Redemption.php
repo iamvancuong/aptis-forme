@@ -10,10 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Redemption extends Model
 {
-    protected $fillable = ['email', 'code', 'ip_address', 'fingerprint', 'user_id'];
+    protected $fillable = ['email', 'code', 'promo_code_id', 'ip_address', 'fingerprint', 'user_id'];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function promoCode(): BelongsTo
+    {
+        return $this->belongsTo(PromoCode::class);
     }
 }

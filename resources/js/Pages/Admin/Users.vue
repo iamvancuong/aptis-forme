@@ -54,7 +54,12 @@ function extend(u) {
                                 <div class="text-slate-500">{{ u.email }}</div>
                             </Link>
                         </td>
-                        <td class="px-4 py-3 text-slate-600">{{ u.source }}</td>
+                        <td class="px-4 py-3">
+                            <span v-if="u.is_promo" class="rounded-full bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700">🎁 Mã KM</span>
+                            <span v-else class="text-slate-600">{{ u.source }}</span>
+                            <span v-if="u.converted" class="ml-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700">Đã gia hạn</span>
+                            <span v-else-if="u.is_promo" class="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Chưa gia hạn</span>
+                        </td>
                         <td class="px-4 py-3">
                             <span :class="u.is_active_access ? 'text-slate-700' : 'text-red-600'">
                                 {{ u.expires_at || 'Không giới hạn' }}
