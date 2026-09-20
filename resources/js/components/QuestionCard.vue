@@ -94,16 +94,54 @@ const orderingList = computed(() => Array.isArray(answer.value) && answer.value.
             </div>
         </div>
 
-        <!-- matching (items + choices) → {idx: choiceIndex} : listening 2/3/4, reading 3/4 -->
-        <div v-else-if="meta.items && meta.choices" class="mt-3 space-y-2">
-            <div v-for="(it, ii) in meta.items" :key="ii" class="flex items-center gap-3 text-sm">
-                <span class="w-40 font-medium text-slate-800">{{ it }}</span>
+        <!-- matching (items + choices) → {idx: choiceIndex} : listening 2, reading 3/4 -->
+        <div v-else-if="meta.items && meta.choices" class="mt-3 space-y-3">
+            <div v-for="(it, ii) in meta.items" :key="ii"
+                 class="flex flex-col gap-2 rounded-lg border border-slate-100 p-2 sm:flex-row sm:items-center sm:gap-3 sm:border-0 sm:p-0 text-sm">
+                <div class="flex-1">
+                    <div class="font-medium text-slate-800">{{ it }}</div>
+                    <!-- Listening Part 2: mỗi người nói có audio riêng -->
+                    <audio v-if="question.audio_urls && question.audio_urls[ii]"
+                           :src="question.audio_urls[ii]" controls class="mt-1 w-full max-w-xs"></audio>
+                </div>
                 <select :value="(answer || {})[ii] ?? ''"
                         @change="e => { answer = { ...(answer||{}), [ii]: e.target.value }; }"
                         class="rounded-md border border-slate-300 px-2 py-1 text-sm">
                     <option value="" disabled>— chọn —</option>
                     <option v-for="(c, ci) in meta.choices" :key="ci" :value="String(ci)">{{ c }}</option>
                 </select>
+            </div>
+        </div>
+
+        <!-- Listening Part 3 (multi_matching): statements + shared_choices → {idx: choiceIndex} -->
+        <div v-else-if="meta.statements && meta.shared_choices" class="mt-3 space-y-3">
+            <div v-if="meta.topic" class="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">{{ meta.topic }}</div>
+            <div v-for="(st, si) in meta.statements" :key="si"
+                 class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3 text-sm">
+                <span class="flex-1 text-slate-800">{{ si + 1 }}. {{ st }}</span>
+                <select :value="(answer || {})[si] ?? ''"
+                        @change="e => { answer = { ...(answer||{}), [si]: e.target.value }; }"
+                        class="rounded-md border border-slate-300 px-2 py-1 text-sm">
+                    <option value="" disabled>— chọn —</option>
+                    <option v-for="(c, ci) in meta.shared_choices" :key="ci" :value="String(ci)">{{ c }}</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Listening Part 4 (single_choice): nhiều câu con, mỗi câu chọn 1 đáp án → {idx: choiceIndex} -->
+        <div v-else-if="question.skill === 'listening' && meta.questions" class="mt-3 space-y-4">
+            <div v-if="meta.topic" class="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">{{ meta.topic }}</div>
+            <div v-for="(sq, qi) in meta.questions" :key="qi" class="rounded-lg border border-slate-200 p-3">
+                <div class="text-sm font-medium text-slate-800">{{ qi + 1 }}. {{ sq.question }}</div>
+                <div class="mt-2 space-y-1.5">
+                    <label v-for="(c, ci) in sq.choices" :key="ci"
+                           class="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm cursor-pointer"
+                           :class="(answer || {})[qi] === String(ci) ? 'border-brand-500 bg-brand-50' : 'border-slate-200'">
+                        <input type="radio" :value="String(ci)" :checked="(answer || {})[qi] === String(ci)"
+                               @change="answer = { ...(answer||{}), [qi]: String(ci) }" class="text-brand-600">
+                        <span>{{ c }}</span>
+                    </label>
+                </div>
             </div>
         </div>
 

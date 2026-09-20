@@ -24,7 +24,9 @@ for (const q of props.questions) {
     const m = q.metadata || {};
     if (q.type === 'fill_in_blanks_mc') answers[q.id] = (m.paragraphs || []).map(() => null);
     else if (q.type === 'sentence_ordering') answers[q.id] = (m.sentences || []).slice(1);
-    else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)) answers[q.id] = {};
+    else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)
+        || (m.statements && m.shared_choices)                       // Listening Part 3
+        || (q.skill === 'listening' && m.questions)) answers[q.id] = {}; // Listening Part 4
     else if (q.skill === 'writing') {
         if (m.fields) answers[q.id] = m.fields.map(() => '');
         else if (m.questions) answers[q.id] = m.questions.map(() => '');
@@ -189,21 +191,8 @@ function submit() {
                     Bài Nói đang chạy tự động — vui lòng nói khi có tín hiệu ghi âm.
                 </div>
 
-                <!-- Các kỹ năng khác: điều hướng thủ công -->
+                <!-- Các kỹ năng khác: phần nội dung phụ (thanh điều hướng nằm ở footer cố định) -->
                 <template v-else>
-                    <div class="mt-6 flex items-center justify-between gap-3">
-                        <button @click="go(current - 1)" :disabled="current === 0"
-                                class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-40">← Trước</button>
-                        <QuestionNav :items="navItems" :current="current" @jump="go" />
-                        <button v-if="!isLast" @click="go(current + 1)"
-                                class="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Tiếp →</button>
-                        <a v-else-if="trial" href="/register"
-                           class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700">Đăng ký để tiếp tục</a>
-                        <button v-else @click="submit" :disabled="form.processing"
-                                class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
-                            {{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}
-                        </button>
-                    </div>
                     <div v-if="!trial" class="mt-6 text-center">
                         <button v-if="!isLast" @click="submit" :disabled="form.processing" class="text-xs text-slate-400 hover:text-red-600">Nộp bài sớm</button>
                     </div>
@@ -214,5 +203,23 @@ function submit() {
                 </template>
             </template>
         </main>
+
+        <!-- Thanh điều hướng CỐ ĐỊNH dưới đáy (không trôi theo nội dung) -->
+        <footer v-if="!isSpeaking && !(isSpeaking && !speakingStarted)"
+                class="sticky bottom-0 z-20 border-t border-slate-200 bg-white/90 backdrop-blur">
+            <div class="mx-auto flex max-w-2xl items-center justify-between gap-3 px-6 py-3">
+                <button @click="go(current - 1)" :disabled="current === 0"
+                        class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 disabled:opacity-40">← Trước</button>
+                <QuestionNav :items="navItems" :current="current" @jump="go" />
+                <button v-if="!isLast" @click="go(current + 1)"
+                        class="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">Tiếp →</button>
+                <a v-else-if="trial" href="/register"
+                   class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700">Đăng ký để tiếp tục</a>
+                <button v-else @click="submit" :disabled="form.processing"
+                        class="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60">
+                    {{ form.processing ? 'Đang nộp…' : 'Nộp bài' }}
+                </button>
+            </div>
+        </footer>
     </div>
 </template>

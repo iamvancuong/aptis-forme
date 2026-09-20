@@ -23,7 +23,9 @@ for (const s of props.sections) {
         const m = q.metadata || {};
         if (q.type === 'fill_in_blanks_mc') answers[s.index][q.id] = (m.paragraphs || []).map(() => null);
         else if (q.type === 'sentence_ordering') answers[s.index][q.id] = (m.sentences || []).slice(1);
-        else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)) answers[s.index][q.id] = {};
+        else if ((m.pairs && m.dropdown_pool) || (m.items && m.choices)
+            || (m.statements && m.shared_choices)                       // Listening Part 3
+            || (q.skill === 'listening' && m.questions)) answers[s.index][q.id] = {}; // Listening Part 4
         else answers[s.index][q.id] = '';
         flat.push({ sectionIndex: s.index, part: s.part, question: q });
     }
