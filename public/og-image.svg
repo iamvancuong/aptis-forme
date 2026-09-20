@@ -1,0 +1,36 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#4f46e5"/><stop offset="1" stop-color="#7c3aed"/>
+        </linearGradient>
+        <linearGradient id="body" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#a5b4fc"/><stop offset="1" stop-color="#c4b5fd"/>
+        </linearGradient>
+    </defs>
+    <rect width="1200" height="630" fill="url(#bg)"/>
+    <circle cx="1050" cy="120" r="260" fill="#ffffff" opacity="0.06"/>
+    <circle cx="150" cy="560" r="220" fill="#ffffff" opacity="0.06"/>
+
+    <!-- Logo chim nhai trong o trang bo tron -->
+    <g transform="translate(110 150)">
+        <rect width="150" height="150" rx="36" fill="#ffffff"/>
+        <g transform="translate(30 30) scale(1.4)">
+            <path d="M14 40 L7 54 L26 48 Z" fill="url(#body)"/>
+            <circle cx="30" cy="38" r="17" fill="url(#body)"/>
+            <circle cx="41" cy="24" r="13" fill="url(#body)"/>
+            <path d="M36 13 L33 4 L41 11 Z" fill="url(#body)"/>
+            <path d="M42 11 L43 2 L48 11 Z" fill="url(#body)"/>
+            <path d="M20 35 C29 31 40 35 43 45 C34 47 25 45 20 35 Z" fill="#4f46e5" opacity=".25"/>
+            <path d="M51 20 L51 30 L63 25 Z" fill="#f59e0b"/>
+            <circle cx="45" cy="22" r="5.4" fill="#fff"/>
+            <circle cx="46.4" cy="22.2" r="2.7" fill="#0f172a"/>
+        </g>
+    </g>
+    <text x="290" y="250" font-family="'Be Vietnam Pro',Segoe UI,Arial,sans-serif" font-size="96" font-weight="800" fill="#ffffff">nhaiaptis</text>
+
+    <text x="110" y="410" font-family="'Be Vietnam Pro',Segoe UI,Arial,sans-serif" font-size="52" font-weight="700" fill="#ffffff">Luyện thi APTIS online</text>
+    <text x="110" y="480" font-family="'Be Vietnam Pro',Segoe UI,Arial,sans-serif" font-size="34" font-weight="400" fill="#e0e7ff">Học thử miễn phí · Thi thử full đề · AI chấm Writing &amp; Speaking</text>
+
+    <rect x="110" y="530" width="330" height="70" rx="35" fill="#ffffff"/>
+    <text x="275" y="575" text-anchor="middle" font-family="'Be Vietnam Pro',Segoe UI,Arial,sans-serif" font-size="30" font-weight="700" fill="#4f46e5">nhaiaptis.com</text>
+</svg>

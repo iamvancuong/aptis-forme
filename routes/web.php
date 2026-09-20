@@ -5,18 +5,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\RegistrationController;
-use App\Models\Content\Feedback;
-use App\Models\Content\HighScore;
 use Illuminate\Support\Facades\Route;
 
 // ── Marketing / SEO (Blade, server-render) ──────────────────────────────
 Route::get('/', function () {
     return view('welcome', [
         'packages' => config('pricing.packages'),
-        'feedbacks' => Feedback::where('is_active', true)->latest()->take(3)->get(),
-        'highScores' => HighScore::where('is_active', true)->latest()->take(6)->get(),
+        'catalogStats' => \App\Http\Controllers\CatalogController::summary(),
     ]);
 })->name('home');
+
+// Ngân hàng đề (công khai — danh mục toàn bộ đề)
+Route::get('/ngan-hang-de', [\App\Http\Controllers\CatalogController::class, 'index'])->name('catalog');
 
 // Học thử (không cần đăng nhập, mỗi kỹ năng 1 lần)
 Route::get('/hoc-thu/{skill}', [\App\Http\Controllers\TrialController::class, 'show'])->name('trial.show');
@@ -33,6 +33,7 @@ Route::get('/sitemap.xml', function () {
     $urls = [
         ['loc' => route('home'), 'priority' => '1.0', 'freq' => 'weekly'],
         ['loc' => route('aptis'), 'priority' => '0.9', 'freq' => 'monthly'],
+        ['loc' => route('catalog'), 'priority' => '0.8', 'freq' => 'weekly'],
         ['loc' => route('about'), 'priority' => '0.8', 'freq' => 'monthly'],
         ['loc' => route('register'), 'priority' => '0.9', 'freq' => 'weekly'],
         ['loc' => route('policy.refund'), 'priority' => '0.3', 'freq' => 'yearly'],
