@@ -1,6 +1,7 @@
 <script setup>
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import BrandLogo from '../components/BrandLogo.vue';
 
 const page = usePage();
 const flashSuccess = computed(() => page.props.flash?.success);
@@ -26,7 +27,10 @@ function logout() {
         <header class="bg-slate-900 text-white">
             <div class="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-6">
-                    <span class="font-bold">APTIS V2 · Admin</span>
+                    <span class="flex items-center gap-2 font-bold">
+                        <BrandLogo :size="26" />
+                        nhaiaptis · Admin
+                    </span>
                     <nav class="flex gap-1 text-sm">
                         <Link
                             v-for="n in nav"

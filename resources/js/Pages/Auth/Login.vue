@@ -1,6 +1,7 @@
 <script setup>
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import BrandLogo from '../../components/BrandLogo.vue';
 
 const page = usePage();
 const flashError = computed(() => page.props.flash?.error);
@@ -24,8 +25,8 @@ function submit() {
     <main class="min-h-screen flex items-center justify-center px-6 bg-slate-50">
         <div class="w-full max-w-sm">
             <div class="text-center mb-8">
-                <span class="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-violet-600 text-lg font-bold text-white">A</span>
-                <h1 class="mt-3 text-2xl font-bold text-slate-900">APTIS V2</h1>
+                <BrandLogo :size="56" class="mx-auto" />
+                <h1 class="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">nhai<span class="text-slate-400">aptis</span></h1>
                 <p class="mt-1 text-sm text-slate-500">Đăng nhập để vào luyện thi</p>
             </div>
 

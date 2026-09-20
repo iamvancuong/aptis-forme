@@ -70,23 +70,26 @@
         </div>
     </section>
 
-    {{-- ══════════ FEATURES (gọn, 1 hàng) ══════════ --}}
-    <section class="mx-auto max-w-6xl px-6 py-10">
-        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            @foreach ([
-                ['🎯', 'from-sky-500 to-blue-600', 'Luyện đúng trọng tâm', 'Phản hồi đúng/sai ngay sau mỗi câu.'],
-                ['⏱️', 'from-amber-500 to-orange-600', 'Thi thử sát đề thật', 'Full đề có tính giờ, chấm từng phần.'],
-                ['🤖', 'from-violet-500 to-purple-600', 'AI chấm chi tiết', 'Writing & Speaking theo tiêu chí APTIS.'],
-                ['📈', 'from-emerald-500 to-teal-600', 'Theo dõi tiến bộ', 'Lịch sử, đáp án, bảng xếp hạng.'],
-            ] as $f)
-                <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-lg">
-                    <div class="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br {{ $f[1] }} text-xl text-white shadow-md">{{ $f[0] }}</div>
-                    <h3 class="mt-3 font-bold text-slate-900">{{ $f[2] }}</h3>
-                    <p class="mt-1 text-sm text-slate-500">{{ $f[3] }}</p>
+    {{-- ══════════ NGÂN HÀNG ĐỀ (uy tín) ══════════ --}}
+    @if (($catalogStats['sets'] ?? 0) > 0)
+        <section class="mx-auto max-w-5xl px-6 py-10">
+            <div class="flex flex-wrap items-center justify-between gap-6 rounded-3xl bg-slate-900 px-8 py-8 text-white">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-wide text-brand-300">Ngân hàng đề</p>
+                    <h2 class="mt-1 text-2xl font-bold">Kho đề thật, cập nhật liên tục</h2>
+                    <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-300">
+                        <span><b class="text-xl font-extrabold text-white">{{ $catalogStats['sets'] }}</b> bộ đề</span>
+                        <span><b class="text-xl font-extrabold text-white">{{ $catalogStats['questions'] }}</b> câu hỏi</span>
+                        <span><b class="text-xl font-extrabold text-white">{{ $catalogStats['skills'] }}</b> kỹ năng</span>
+                    </p>
                 </div>
-            @endforeach
-        </div>
-    </section>
+                <a href="{{ route('catalog') }}" class="rounded-2xl bg-white px-6 py-3 text-sm font-bold text-slate-900 hover:bg-slate-100">Xem toàn bộ đề →</a>
+            </div>
+        </section>
+    @endif
+
+    {{-- ══════════ DEMO GIAO DIỆN LUYỆN THI ══════════ --}}
+    @include('partials.demo-tabs')
 
     {{-- ══════════ BẢNG GIÁ ══════════ --}}
     <section id="bang-gia" class="mx-auto max-w-4xl px-6 py-12">
@@ -124,38 +127,4 @@
         </div>
     </section>
 
-    {{-- ══════════ SOCIAL PROOF (gọn) ══════════ --}}
-    @if ($feedbacks->isNotEmpty() || $highScores->isNotEmpty())
-        <section class="mx-auto max-w-6xl px-6 pb-4">
-            @if ($feedbacks->isNotEmpty())
-                <div class="grid gap-6 sm:grid-cols-3">
-                    @foreach ($feedbacks as $fb)
-                        <figure class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-                            <div class="text-amber-400">★★★★★</div>
-                            <blockquote class="mt-3 text-sm leading-relaxed text-slate-700">"{{ $fb->content }}"</blockquote>
-                            <figcaption class="mt-4 flex items-center gap-3">
-                                <span class="grid h-9 w-9 place-items-center rounded-full bg-brand-100 text-sm font-bold text-brand-700">{{ mb_substr($fb->name, 0, 1) }}</span>
-                                <span class="text-sm font-semibold text-slate-900">{{ $fb->name }}</span>
-                            </figcaption>
-                        </figure>
-                    @endforeach
-                </div>
-            @endif
-        </section>
-    @endif
-
-    {{-- ══════════ CTA CUỐI ══════════ --}}
-    <section class="mx-auto max-w-5xl px-6 py-14">
-        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-600 px-8 py-14 text-center text-white shadow-2xl">
-            <div class="blob left-10 top-0 h-56 w-56 bg-white/20"></div>
-            <div class="relative">
-                <h2 class="text-3xl font-bold sm:text-4xl">Bắt đầu chinh phục APTIS hôm nay</h2>
-                <p class="mx-auto mt-3 max-w-xl text-white/80">Học thử miễn phí — không cần thẻ, không cần đăng nhập.</p>
-                <div class="mt-8 flex flex-wrap justify-center gap-3">
-                    <a href="{{ route('trial.show', 'reading') }}" class="rounded-2xl bg-white px-7 py-4 text-sm font-bold text-brand-700 hover:bg-brand-50">Học thử ngay</a>
-                    <a href="{{ route('register') }}" class="rounded-2xl bg-white/10 px-7 py-4 text-sm font-bold text-white ring-1 ring-white/30 hover:bg-white/20">Đăng ký ngay</a>
-                </div>
-            </div>
-        </div>
-    </section>
 @endsection

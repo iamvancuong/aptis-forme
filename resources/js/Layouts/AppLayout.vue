@@ -2,6 +2,7 @@
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useAntiCopy } from '../composables/antiCopy';
+import BrandLogo from '../components/BrandLogo.vue';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
@@ -31,8 +32,8 @@ function logout() {
             <div class="mx-auto max-w-5xl px-6 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-6">
                     <Link href="/dashboard" class="flex items-center gap-2">
-                        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-600 to-violet-600 text-sm font-bold text-white">A</span>
-                        <span class="font-bold text-slate-900">APTIS V2</span>
+                        <BrandLogo :size="32" />
+                        <span class="font-extrabold tracking-tight text-slate-900">nhai<span class="text-slate-400">aptis</span></span>
                     </Link>
                     <nav class="hidden gap-1 text-sm sm:flex">
                         <Link v-for="n in nav" :key="n.href" :href="n.href"

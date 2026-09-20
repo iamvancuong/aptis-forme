@@ -1,0 +1,30 @@
+<script setup>
+// Logo chú chim nhại (mascot) — brand nhaiaptis.
+defineProps({
+    size: { type: [Number, String], default: 32 },
+})
+</script>
+
+<template>
+    <svg :width="size" :height="size" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="nhaiaptis">
+        <defs>
+            <linearGradient id="nhaiBody" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1" />
+                <stop offset="1" stop-color="#7c3aed" />
+            </linearGradient>
+        </defs>
+        <path d="M14 40 L7 54 L26 48 Z" fill="url(#nhaiBody)" />
+        <circle cx="30" cy="38" r="17" fill="url(#nhaiBody)" />
+        <circle cx="41" cy="24" r="13" fill="url(#nhaiBody)" />
+        <path d="M36 13 L33 4 L41 11 Z" fill="url(#nhaiBody)" />
+        <path d="M42 11 L43 2 L48 11 Z" fill="url(#nhaiBody)" />
+        <path d="M20 35 C29 31 40 35 43 45 C34 47 25 45 20 35 Z" fill="#ffffff" opacity=".22" />
+        <path d="M51 20 L51 30 L63 25 Z" fill="#f59e0b" />
+        <path d="M51 25 L51 30 L63 25 Z" fill="#d97706" />
+        <circle cx="45" cy="22" r="5.4" fill="#fff" />
+        <circle cx="46.4" cy="22.2" r="2.7" fill="#0f172a" />
+        <circle cx="45.4" cy="21" r="1" fill="#fff" />
+        <path d="M27 54 L25 61 L31 56 Z" fill="#f59e0b" />
+        <path d="M35 54 L34 61 L40 56 Z" fill="#f59e0b" />
+    </svg>
+</template>
