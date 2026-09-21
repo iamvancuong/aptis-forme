@@ -30,7 +30,9 @@ class HistoryController extends Controller
 
     public function show(Request $request, Attempt $attempt)
     {
-        abort_unless($attempt->user_id === $request->user()->id, 403);
+        // Admin được xem bài của mọi học viên (màn Hoạt động).
+        $viewer = $request->user();
+        abort_unless($attempt->user_id === $viewer->id || $viewer->isAdmin(), 403);
 
         $attempt->load('answers');
         $set = $attempt->set; // db1 (có thể null nếu mock)
@@ -64,6 +66,10 @@ class HistoryController extends Controller
                 'score' => $attempt->score,
                 'created_at' => $attempt->created_at?->format('d/m/Y H:i'),
                 'set_title' => $set?->title,
+                // Chỉ gửi khi admin xem bài của người khác
+                'owner' => $attempt->user_id !== $viewer->id
+                    ? $attempt->user?->only(['id', 'name', 'email'])
+                    : null,
             ],
             'items' => $items,
         ]);

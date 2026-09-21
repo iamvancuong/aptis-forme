@@ -2,8 +2,12 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppLayout from '../../Layouts/AppLayout.vue';
+import AnswerReview from '../../components/AnswerReview.vue';
+import { buildAnswerRows } from '../../composables/answerDisplay';
 
 const props = defineProps({ attempt: Object, items: Array });
+
+const hasRows = (it) => !!buildAnswerRows(it.question, it.your_answer, it.answer_key)?.length;
 
 const grading = ref(null);
 function gradeAI(answerId, skill) {
@@ -38,7 +42,11 @@ function fmtKey(k) {
 <template>
     <Head :title="`Kết quả — ${attempt.set_title || attempt.skill}`" />
     <AppLayout>
-        <Link href="/history" class="text-sm text-slate-500 hover:text-slate-800">← Lịch sử</Link>
+        <Link v-if="attempt.owner" href="/admin/activity" class="text-sm text-slate-500 hover:text-slate-800">← Hoạt động (admin)</Link>
+        <Link v-else href="/history" class="text-sm text-slate-500 hover:text-slate-800">← Lịch sử</Link>
+        <div v-if="attempt.owner" class="mt-3 rounded-xl bg-amber-50 px-4 py-2 text-sm text-amber-800 ring-1 ring-amber-200">
+            Đang xem bài của học viên <Link :href="`/admin/users/${attempt.owner.id}`" class="font-semibold underline">{{ attempt.owner.name }} ({{ attempt.owner.email }})</Link>
+        </div>
 
         <div class="mt-4 rounded-2xl bg-white p-6 ring-1 ring-slate-200 text-center">
             <div class="text-sm text-slate-500">{{ attempt.set_title || 'Bài làm' }}</div>
@@ -64,7 +72,11 @@ function fmtKey(k) {
                     <span v-else-if="it.is_correct === false" class="flex-shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs text-red-700">Sai</span>
                     <span v-else class="flex-shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Chờ chấm</span>
                 </div>
-                <dl class="mt-3 space-y-1 text-sm">
+                <div v-if="hasRows(it)" class="mt-3">
+                    <AnswerReview :question="it.question" :answer="it.your_answer" :answer-key="it.answer_key" />
+                    <div v-if="it.answer_key?.explanation" class="mt-2 flex gap-2 text-sm"><span class="w-20 flex-shrink-0 text-slate-400">Giải thích:</span><span class="text-slate-600" v-html="it.answer_key.explanation"></span></div>
+                </div>
+                <dl v-else class="mt-3 space-y-1 text-sm">
                     <div class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Bạn trả lời:</dt><dd class="whitespace-pre-wrap text-slate-800">{{ fmtAnswer(it.your_answer) }}</dd></div>
                     <div v-if="fmtKey(it.answer_key)" class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Đáp án:</dt><dd class="font-medium text-emerald-700">{{ fmtKey(it.answer_key) }}</dd></div>
                     <div v-if="it.answer_key?.explanation" class="flex gap-2"><dt class="w-28 flex-shrink-0 text-slate-400">Giải thích:</dt><dd class="text-slate-600" v-html="it.answer_key.explanation"></dd></div>
@@ -73,12 +85,12 @@ function fmtKey(k) {
                 <!-- Chấm AI Speaking -->
                 <template v-if="it.skill === 'speaking'">
                     <button
-                        v-if="!it.ai"
+                        v-if="!it.ai && !attempt.owner"
                         @click="gradeAI(it.answer_id, 'speaking')"
                         :disabled="grading === it.answer_id"
                         class="mt-3 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
                     >{{ grading === it.answer_id ? 'AI đang chấm…' : '🎙 Chấm bằng AI' }}</button>
-                    <div v-else class="mt-4 rounded-xl bg-brand-50 p-4 ring-1 ring-brand-200">
+                    <div v-else-if="it.ai" class="mt-4 rounded-xl bg-brand-50 p-4 ring-1 ring-brand-200">
                         <div class="flex flex-wrap items-center gap-3 text-xs">
                             <span class="rounded-full bg-brand-600 px-2.5 py-1 font-semibold text-white">CEFR {{ it.ai.cefr_level }}</span>
                             <span class="rounded-full bg-white px-2.5 py-1 font-medium text-slate-700 ring-1 ring-slate-200">Tổng: <b class="text-brand-700">{{ it.ai.overall_score_10 }}/10</b></span>
@@ -94,13 +106,13 @@ function fmtKey(k) {
                 <!-- Chấm AI Writing -->
                 <template v-if="it.skill === 'writing'">
                     <button
-                        v-if="!it.ai"
+                        v-if="!it.ai && !attempt.owner"
                         @click="gradeAI(it.answer_id, 'writing')"
                         :disabled="grading === it.answer_id"
                         class="mt-3 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
                     >{{ grading === it.answer_id ? 'AI đang chấm…' : '🤖 Chấm bằng AI' }}</button>
 
-                    <div v-else class="mt-4 rounded-xl bg-brand-50 p-4 ring-1 ring-brand-200">
+                    <div v-else-if="it.ai" class="mt-4 rounded-xl bg-brand-50 p-4 ring-1 ring-brand-200">
                         <div class="flex flex-wrap gap-3 text-xs">
                             <span v-for="(v, k) in it.ai.scores" :key="k" class="rounded-full bg-white px-2.5 py-1 font-medium text-slate-700 ring-1 ring-slate-200">
                                 {{ k }}: <b class="text-brand-700">{{ v }}/5</b>

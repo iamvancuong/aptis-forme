@@ -90,8 +90,9 @@ function toggleBlock() {
                                     <td class="px-5 py-2 text-slate-500">{{ a.mode === 'mock' ? 'Thi thử' : 'Luyện tập' }}</td>
                                     <td class="px-5 py-2">{{ a.score !== null ? Math.round(a.score) + '%' : '—' }}</td>
                                     <td class="px-5 py-2 text-xs text-slate-400">{{ a.created_at }}</td>
+                                    <td class="px-5 py-2 text-right"><Link :href="`/history/${a.id}`" class="rounded-md bg-slate-100 px-2 py-1 text-xs hover:bg-slate-200">Xem bài</Link></td>
                                 </tr>
-                                <tr v-if="attempts.length === 0"><td class="px-5 py-6 text-center text-slate-400" colspan="4">Chưa làm bài nào.</td></tr>
+                                <tr v-if="attempts.length === 0"><td class="px-5 py-6 text-center text-slate-400" colspan="5">Chưa làm bài nào.</td></tr>
                             </tbody>
                         </table>
                     </div>

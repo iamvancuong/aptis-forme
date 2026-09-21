@@ -11,6 +11,7 @@ const mobileOpen = ref(false);
 const nav = [
     { label: 'Tổng quan', href: '/admin' },
     { label: 'Học viên', href: '/admin/users' },
+    { label: 'Hoạt động', href: '/admin/activity' },
     { label: 'Đơn hàng', href: '/admin/orders' },
     { label: 'Mã KM', href: '/admin/promo-codes' },
 ];

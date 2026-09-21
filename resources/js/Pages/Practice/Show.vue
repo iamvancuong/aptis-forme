@@ -4,6 +4,8 @@ import axios from 'axios';
 import { computed, reactive, ref } from 'vue';
 import QuestionCard from '../../components/QuestionCard.vue';
 import QuestionNav from '../../components/QuestionNav.vue';
+import AnswerReview from '../../components/AnswerReview.vue';
+import { buildAnswerRows } from '../../composables/answerDisplay';
 import { useAntiCopy } from '../../composables/antiCopy';
 
 const page = usePage();
@@ -102,6 +104,9 @@ function fmtKey(k) {
     return String(val);
 }
 
+const checkedRows = computed(() => currentChecked.value
+    && buildAnswerRows(currentQuestion.value, answers[currentQuestion.value.id], currentChecked.value.answer_key)?.length);
+
 const navItems = computed(() => props.questions.map((q) => ({
     label: q.stem || q.title,
     answered: answered(q.id),
@@ -180,7 +185,9 @@ function submit() {
                              :class="currentChecked.is_correct ? 'text-emerald-700' : 'text-red-700'">
                             <span>{{ currentChecked.is_correct ? '✓ Chính xác!' : '✗ Chưa đúng' }}</span>
                         </div>
-                        <div v-if="fmtKey(currentChecked.answer_key)" class="mt-2 text-sm">
+                        <AnswerReview v-if="checkedRows" class="mt-3" :question="currentQuestion"
+                                      :answer="answers[currentQuestion.id]" :answer-key="currentChecked.answer_key" />
+                        <div v-else-if="fmtKey(currentChecked.answer_key)" class="mt-2 text-sm">
                             <span class="text-slate-500">Đáp án đúng:</span>
                             <span class="font-medium text-emerald-700">{{ fmtKey(currentChecked.answer_key) }}</span>
                         </div>

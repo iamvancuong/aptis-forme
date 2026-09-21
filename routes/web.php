@@ -156,6 +156,8 @@ Route::middleware(['auth', 'user.blocked', 'admin'])
         Route::post('/users/{user}/add-ai', [\App\Http\Controllers\Admin\UserController::class, 'addAi'])->name('users.add-ai');
         Route::post('/users/{user}/reset-ai', [\App\Http\Controllers\Admin\UserController::class, 'resetAi'])->name('users.reset-ai');
 
+        Route::get('/activity', [\App\Http\Controllers\Admin\ActivityController::class, 'index'])->name('activity.index');
+
         Route::get('/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
 
         // Mã khuyến mãi
